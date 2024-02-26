@@ -13,7 +13,7 @@ import { Edit, Trash } from "lucide-react";
 import Link from "next/link";
 
 export default function NewCard({ poste }: { poste: NewsPoste }) {
-  const url = new URL('http://localhost:3000/overview')
+  const url = new URL('https://unem-dashboard.vercel.app/overview')
   url.searchParams.set('postId', poste?.id?.toString() ?? '0')
   url.searchParams.set('openModal', 'true')
 
