@@ -27,7 +27,7 @@ export function MainNav({
         نظرة عامة
       </Link>
       <Link
-        href="/student-space"
+        href="/news"
         className={cn({
           'text-muted-foreground' : pathname !== "/news" && pathname !== '/student-space' && pathname !== '/institutions',
         }, "text-sm sm:text-lg font-medium transition-colors hover:text-primary")}

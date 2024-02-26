@@ -28,7 +28,7 @@ export type Thumbnail = {
 export type Poste = {
   title: string;
   discribtion: string;
-  videURL: string;
+  videoURL?: string | null;
   thumbnail: Thumbnail;
   images: ImageType[];
 }

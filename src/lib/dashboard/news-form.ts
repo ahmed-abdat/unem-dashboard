@@ -6,8 +6,9 @@ export const NewsForm = z.object({
   }).min(4, {
     message: "عنوان الخبر يجب أن يحتوي على 4 أحرف على الأقل",
     }),
-  videURL: z.string().refine(
+  videoURL: z.string().refine(
     (url) => {
+      if(url === "") return true;
       const youtubeRegex =
       /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be\/|be.com\/\S*(?:watch|embed)(?:(?:(?=\/[-a-zA-Z0-9_]{11,}(?!\S))\/)|(?:\S*v=|v\/)))([-a-zA-Z0-9_]{11,})/
         const facebookRegex =
@@ -19,7 +20,7 @@ export const NewsForm = z.object({
       message:
         "الرجاء إدخال رابط صحيح للفيديو. يمكنك إدخال رابط من يوتيوب أو فيسبوك.",
     }
-  ),
+  ).optional(),
   discribtion: z.string().min(4, {
     message: "الوصف يجب أن يحتوي على 4 أحرف على الأقل",
   }),

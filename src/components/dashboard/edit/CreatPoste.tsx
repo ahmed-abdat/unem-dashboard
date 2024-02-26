@@ -25,11 +25,11 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 // This can come from your database or API.
-const defaultValues: Partial<TNewsForm> = {
-  title: "الإتحاد الوطني",
-  videURL: "facebook.com",
-  discribtion: "منشور تجريبي",
-};
+// const defaultValues: Partial<TNewsForm> = {
+//   title: "الإتحاد الوطني",
+//   videURL: "facebook.com",
+//   discribtion: "منشور تجريبي",
+// };
 export function CreateNewPoste() {
   const [thumbnail, setThumbnail] = useState<Thumbnail>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export function CreateNewPoste() {
 
   const form = useForm<TNewsForm>({
     resolver: zodResolver(NewsForm),
-    defaultValues,
+    // defaultValues,
     mode: "onChange",
   });
 
@@ -49,7 +49,11 @@ export function CreateNewPoste() {
         setTimeout(() => {
           setLoading(false)
           toast.success("تم نشر المنشور بنجاح")
-
+          form.reset();
+          setThumbnail(null)
+          setFileImages([])
+          // scroll to top
+          window.scrollTo(0, 0);
         }, 1000);
       } catch (error) {
         setLoading(false)
@@ -60,11 +64,11 @@ export function CreateNewPoste() {
 
   function onSubmit(data: TNewsForm) {
     // toast.success("You submitted the following values:" + JSON.stringify(data) )
-    const {discribtion , title , videURL} = data
+    const {discribtion , title , videoURL} = data
     const posteData = {
       title,
       discribtion,
-      videURL,
+      videoURL : videoURL ? videoURL : null,
       thumbnail,
       images : fileImages,
     }
@@ -95,7 +99,7 @@ export function CreateNewPoste() {
         />
         <FormField
           control={form.control}
-          name="videURL"
+          name="videoURL"
           render={({ field }) => (
             <FormItem>
               <FormLabel> رابط الفيديو </FormLabel>

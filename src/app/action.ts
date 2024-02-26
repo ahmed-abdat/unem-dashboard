@@ -160,12 +160,13 @@ export const deltePosteImages = (
 // ! add poste
 
 export const addPoste = async (poste: Poste) => {
-  const { thumbnail } = poste;
+  const { thumbnail , videoURL} = poste;
   try {
     const posteData = {
       ...poste,
       thumbnail: { url: "", name: thumbnail?.name },
       images: [],
+      videoURL : videoURL ? videoURL : null,
       createdAt: serverTimestamp(),
       lasteUpdate: serverTimestamp(),
     };
