@@ -13,44 +13,47 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
+import { Thumbnail } from "@/types/news-poste";
 
 export default function NewsThumbnail({
-  thumbnailUrl,
-  setThumbnailUrl,
+  thumbnail,
   setThumbnail,
 }: {
-  thumbnailUrl: string | null;
-  setThumbnailUrl: (url: string | null) => void;
-  setThumbnail: (file: File | null) => void;
+  thumbnail : Thumbnail
+  setThumbnail : (thumbnail : Thumbnail) => void
 }) {
 
   const handelOnThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e?.target?.files?.[0];
     // check if the file is image or not
     if (file && file.type.split("/")[0] === "image") {
-      setThumbnail(file);
-      setThumbnailUrl(URL.createObjectURL(file));
+      const thumbnail = {
+        name: file.name,
+        url: URL.createObjectURL(file),
+        file,
+      };
+      setThumbnail(thumbnail);
+      }
     }
-  };
+
 
   const clearThumbnail = () => {
     setThumbnail(null);
-    setThumbnailUrl(null);
   }
 
   return (
-    <Card className="w-[350px]">
+    <Card className="w-full">
       <CardHeader className="px-4 pt-3 pb-5">
         <CardTitle className="font-tajawal font-semibold text-lg">
           اختيار صورة المصغرة
         </CardTitle>
       </CardHeader>
       <CardContent className="px-2 pb-4">
-        {thumbnailUrl ? (
+        {thumbnail ? (
           <>
-            <div className="relative w-full h-[200px] max-w-full pb-4">
+            <div className="relative w-full h-[250px] max-w-full pb-4">
               <Image
-                src={thumbnailUrl}
+                src={thumbnail?.url}
                 fill
                 alt="thumbnail"
                 className="w-full h-full object-cover rounded-md"
@@ -65,7 +68,7 @@ export default function NewsThumbnail({
             </div>
           </>
         ) : (
-          <div className="flex justify-center items-center w-full h-[200px] bg-gray-50 pb-4">
+          <div className="flex justify-center items-center w-full h-[250px] bg-gray-50 pb-4">
             <label className="cursor-pointer w-full h-full flex items-center justify-center rounded-md">
               <input
                 type="file"

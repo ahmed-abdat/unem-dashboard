@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import NewsImages from "./NewsPosteImages";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { NewsForm, TNewsForm } from "@/lib/dashboard/news-form";
 import NewsThumbnail from "./NewsThumbnail";
 import { useState } from "react";
+import { ImageType, Poste, Thumbnail } from "@/types/news-poste";
+import { addPoste } from "@/app/action";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 // This can come from your database or API.
 const defaultValues: Partial<TNewsForm> = {
@@ -26,8 +31,10 @@ const defaultValues: Partial<TNewsForm> = {
   discribtion: "منشور تجريبي",
 };
 export function CreateNewPoste() {
-  const [thumbnail, setThumbnail] = useState<File | null>(null);
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [thumbnail, setThumbnail] = useState<Thumbnail>(null);
+  const [loading, setLoading] = useState(false);
+  const [fileImages, setFileImages] = useState<ImageType[]>([]);
+
 
   const form = useForm<TNewsForm>({
     resolver: zodResolver(NewsForm),
@@ -35,9 +42,36 @@ export function CreateNewPoste() {
     mode: "onChange",
   });
 
+  const addPosteToDataBase = async (posteData : Poste) => {
+    setLoading(true)
+      try {
+        await addPoste(posteData)
+        setTimeout(() => {
+          setLoading(false)
+          toast.success("تم نشر المنشور بنجاح")
+
+        }, 1000);
+      } catch (error) {
+        setLoading(false)
+        toast.error("حدث خطأ أثناء نشر المنشور")
+        console.log(error)
+      }
+  }
+
   function onSubmit(data: TNewsForm) {
     // toast.success("You submitted the following values:" + JSON.stringify(data) )
-    console.log(data);
+    const {discribtion , title , videURL} = data
+    const posteData = {
+      title,
+      discribtion,
+      videURL,
+      thumbnail,
+      images : fileImages,
+    }
+    console.log(posteData)
+    setLoading(true)
+    addPosteToDataBase(posteData)
+
   }
 
   return (
@@ -89,18 +123,19 @@ export function CreateNewPoste() {
             </FormItem>
           )}
         />
-        <NewsThumbnail
+           <NewsThumbnail
           setThumbnail={setThumbnail}
-          setThumbnailUrl={setThumbnailUrl}
-          thumbnailUrl={thumbnailUrl}
+          thumbnail={thumbnail}
         />
         {!thumbnail && (
           <p className="text-sm text-red-500">
             الرجاء اختيار صورة مصغرة للمنشور
           </p>
         )}
-        <Button type="submit" className="w-full mx-auto md:max-w-[90%] text-lg">
+        <NewsImages  fileImages={fileImages} setFileImages={setFileImages}/>
+        <Button type="submit" className="w-full mx-auto md:max-w-full text-lg" disabled={loading}>
           نشر الخبر
+          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         </Button>
       </form>
     </Form>
