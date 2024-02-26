@@ -24,12 +24,8 @@ import { addPoste } from "@/app/action";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-// This can come from your database or API.
-// const defaultValues: Partial<TNewsForm> = {
-//   title: "الإتحاد الوطني",
-//   videURL: "facebook.com",
-//   discribtion: "منشور تجريبي",
-// };
+
+
 export function CreateNewPoste() {
   const [thumbnail, setThumbnail] = useState<Thumbnail>(null);
   const [loading, setLoading] = useState(false);
@@ -38,7 +34,6 @@ export function CreateNewPoste() {
 
   const form = useForm<TNewsForm>({
     resolver: zodResolver(NewsForm),
-    // defaultValues,
     mode: "onChange",
   });
 
@@ -49,11 +44,15 @@ export function CreateNewPoste() {
         setTimeout(() => {
           setLoading(false)
           toast.success("تم نشر المنشور بنجاح")
-          form.reset();
+          form.reset({
+            title: "",
+            discribtion: "",
+            videoURL: "",
+          });
           setThumbnail(null)
           setFileImages([])
-          // scroll to top
-          window.scrollTo(0, 0);
+          // scroll to top smothly
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }, 1000);
       } catch (error) {
         setLoading(false)
@@ -63,7 +62,6 @@ export function CreateNewPoste() {
   }
 
   function onSubmit(data: TNewsForm) {
-    // toast.success("You submitted the following values:" + JSON.stringify(data) )
     const {discribtion , title , videoURL} = data
     const posteData = {
       title,
@@ -73,6 +71,14 @@ export function CreateNewPoste() {
       images : fileImages,
     }
     console.log(posteData)
+    if (!thumbnail?.name) {
+      toast.error("يجب إضافة صورة مصغرة للمنشور");
+      return;
+    }
+    if (fileImages.length === 0) {
+      toast.error("يجب إضافة صورة واحدة على الأقل");
+      return;
+    }
     setLoading(true)
     addPosteToDataBase(posteData)
 
@@ -137,6 +143,11 @@ export function CreateNewPoste() {
           </p>
         )}
         <NewsImages  fileImages={fileImages} setFileImages={setFileImages}/>
+        {fileImages.length === 0 && (
+          <p className="text-sm text-red-500">
+            الرجاء اختيار صورة واحدة على الأقل للمنشور
+          </p>
+        )}
         <Button type="submit" className="w-full mx-auto md:max-w-full text-lg" disabled={loading}>
           نشر الخبر
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

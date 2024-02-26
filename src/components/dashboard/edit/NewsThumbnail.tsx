@@ -41,6 +41,8 @@ export default function NewsThumbnail({
     setThumbnail(null);
   }
 
+  
+
   return (
     <Card className="w-full">
       <CardHeader className="px-4 pt-3 pb-5">
@@ -55,6 +57,9 @@ export default function NewsThumbnail({
               <Image
                 src={thumbnail?.url}
                 fill
+                sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 30vw"
+                priority={true}
+                loading="eager"
                 alt="thumbnail"
                 className="w-full h-full object-cover rounded-md"
               />

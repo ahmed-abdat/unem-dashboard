@@ -13,11 +13,15 @@ import { Edit, Trash } from "lucide-react";
 import Link from "next/link";
 
 export default function NewCard({ poste }: { poste: NewsPoste }) {
-  const url = new URL("https://unem-dashboard.vercel.app/overview");
+
+  const mainUrl = "http://localhost:3000";
+
+
+  const url = new URL(`${mainUrl}/overview`);
   url.searchParams.set("postId", poste?.id?.toString() ?? "0");
   url.searchParams.set("openModal", "true");
 
-  const updateUrl = new URL("https://unem-dashboard.vercel.app/news");
+  const updateUrl = new URL(`${mainUrl}/news`);
   updateUrl.searchParams.set("postId", poste?.id?.toString() ?? "0");
 
   return (
@@ -40,7 +44,7 @@ export default function NewCard({ poste }: { poste: NewsPoste }) {
       </CardHeader>
       <CardFooter className="grid gap-6">
         <div className="flex justify-start items-center gap-x-3">
-          <Button variant="outline">
+          <Button variant="outline" asChild>
             <Link href={updateUrl.toString()} scroll={false}>
               <Edit size={14} />
             </Link>

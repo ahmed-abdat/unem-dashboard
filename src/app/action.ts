@@ -1,5 +1,5 @@
 import { app } from "@/config/firebase";
-import { NewsPoste, Poste } from "@/types/news-poste";
+import { ImageType, NewsPoste, NewsUpdate, Poste, Thumbnail, imagePoste } from "@/types/news-poste";
 import {
   collection,
   getFirestore,
@@ -15,6 +15,7 @@ import {
   updateDoc,
   arrayUnion,
   serverTimestamp,
+  arrayRemove,
 } from "firebase/firestore/lite";
 import {
   getStorage,
@@ -32,14 +33,19 @@ export const getPoste = async (id: string | null) => {
   try {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
-      const data = { ...docSnap.data() };
+      const data = docSnap.data();
       return {
         poste: {
-          ...data,
           id: docSnap.id,
           createdAt: data.createdAt.seconds,
           lasteUpdate: data?.lasteUpdate?.seconds || null,
-        } as NewsPoste,
+          videoURL: docSnap.data().videURL,
+          thumbnail: data.thumbnail || null,
+          images: data.images || [],
+          title : data.title,
+          discribtion : data.discribtion,
+
+        },
         docSnap,
       };
     } else {
@@ -149,8 +155,8 @@ export const deltePosteImages = (
           console.log("image deleted");
         })
         .catch((error) => {
+          DeletePoste(id);
           console.log("image not deleted");
-
           console.log(error);
         });
     })
@@ -214,3 +220,87 @@ export const addPoste = async (poste: Poste) => {
     return { success: false, id: null };
   }
 };
+
+
+// ! update poste
+
+export const updatePosteData = async (id : string ,posteData : NewsUpdate) => {
+  try {
+    await updateDoc(doc(firestore, "postes", id), posteData);
+    console.log("poste updated");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ? update poste images 
+export const updateImages = async (id : string,notHostedImages : ImageType[]) => {
+  try {
+    await Promise.all(
+      notHostedImages.map(async (image) => {
+        const storage = getStorage();
+        const imageRef = ref(storage, `images/${id}/` + image.file.name);
+        await uploadBytes(imageRef, image.file);
+        const downloadURL = await getDownloadURL(imageRef);
+        await updateDoc(doc(firestore, "postes", id), {
+          images: arrayUnion({ url : downloadURL, name : image.file.name }),
+          lasteUpdate : serverTimestamp()
+        });
+      })
+    )
+    console.log("images updated");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ? remove poste images 
+export const removeImage = async (id : string , removeImages : imagePoste[]) => {
+  try {
+    Promise.all(
+      removeImages.map(async (image) => {
+        await updateDoc(doc(firestore, "postes", id), {
+          images: arrayRemove(image),
+          lasteUpdate : serverTimestamp()
+        });
+      })
+    )
+    console.log("images removed");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// ? update thumbnail
+export const updateThumbnail = async (id : string , thumbnail : Thumbnail) => {
+  if(!thumbnail?.file) return console.error("no file");
+  try {
+    const storage = getStorage();
+    const thumbnailRef = ref(storage, `thumbnails/${id}/` + thumbnail?.file.name);
+    await uploadBytes(thumbnailRef, thumbnail?.file);
+    const downloadURL = await getDownloadURL(thumbnailRef);
+    await updateDoc(doc(firestore, "postes", id), {
+      thumbnail: { url: downloadURL, name: thumbnail?.file.name },
+      lasteUpdate : serverTimestamp()
+    });
+    console.log("thumbnail updated");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export const deleteThumbnail = async (id : string , thumbnail : Thumbnail) => {
+  if(!thumbnail) return console.error("no file");
+  try {
+    const storage = getStorage();
+    const thumbnailRef = ref(storage, `thumbnails/${id}/` + thumbnail?.name);
+    await deleteObject(thumbnailRef);
+    await updateDoc(doc(firestore, "postes", id), {
+      thumbnail: null,
+      lasteUpdate : serverTimestamp()
+    });
+    console.log("thumbnail deleted");
+  } catch (error) {
+    console.error(error);
+  }
+}
