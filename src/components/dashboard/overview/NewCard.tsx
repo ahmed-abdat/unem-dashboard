@@ -29,8 +29,8 @@ export default function NewCard({ poste }: { poste: NewsPoste }) {
       <CardHeader className="p-2">
         <div className="relative w-full max-w-full overflow-hidden h-40 rounded-md object-cover">
           <Image
-            src={poste.images[0].url}
-            alt={poste.images[0].name}
+            src={poste?.thumbnail?.url ?? poste.images[0].url}
+            alt={poste?.thumbnail?.name ?? poste.images[0].name}
             className="object-cover rounded-md"
             fill
             sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 30vw"
