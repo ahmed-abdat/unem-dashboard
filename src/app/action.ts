@@ -148,6 +148,8 @@ export const deltePosteImages = (
   images: NewsPoste["images"],
   thumbnail : NewsPoste["thumbnail"] 
 ) => {
+  console.log(thumbnail , images , 'delete poste ?');
+  
   if (!id) return;
   Promise.allSettled(
     images.map(async (img) => {

@@ -40,10 +40,12 @@ export function DeleteModal({
     setLoading(true);
     try {
       deltePosteImages(poste?.id, poste?.images ?? [], poste?.thumbnail ?? null);
-      toast.success("تم حذف المنشور بنجاح");
-      setLoading(false);
-      handelClose();
       router.refresh();
+      setTimeout(() => {
+        toast.success("تم حذف المنشور بنجاح");
+        setLoading(false);
+        handelClose();
+      }, 1500)
     } catch (error) {
       toast.error("لم يتم حذف المنشور بنجاح");
       setLoading(false);
