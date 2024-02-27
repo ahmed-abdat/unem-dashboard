@@ -39,7 +39,7 @@ export function DeleteModal({
   const handelDeletePoste = () => {
     setLoading(true);
     try {
-      deltePosteImages(poste?.id, poste?.images ?? []);
+      deltePosteImages(poste?.id, poste?.images ?? [], poste?.thumbnail ?? null);
       toast.success("تم حذف المنشور بنجاح");
       setLoading(false);
       handelClose();

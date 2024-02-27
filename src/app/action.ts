@@ -141,9 +141,12 @@ const DeletePoste = async (id: string) => {
   }
 };
 
+
+
 export const deltePosteImages = (
   id: string | undefined,
-  images: NewsPoste["images"]
+  images: NewsPoste["images"],
+  thumbnail : NewsPoste["thumbnail"] 
 ) => {
   if (!id) return;
   Promise.allSettled(
@@ -151,6 +154,9 @@ export const deltePosteImages = (
       const imageRef = ref(storage, `images/${id}/` + img.name);
       return deleteObject(imageRef)
         .then(() => {
+          if(thumbnail){
+            deleteThumbnail(id , thumbnail)
+          }
           DeletePoste(id);
           console.log("image deleted");
         })
