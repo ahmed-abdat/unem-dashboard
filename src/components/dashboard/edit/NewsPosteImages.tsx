@@ -122,11 +122,11 @@ export default function NewsImages({
             {fileImages?.map((image, index) => (
               <div
                 className="h-20 w-20 relative mr-1 mb-3"
-                key={`${index}-${image.url}`}
+                key={`${index}-${image?.url}`}
               >
                 <Image
-                  src={image.url}
-                  alt={image.name}
+                  src={image?.url}
+                  alt={image?.name}
                   fill
                   sizes="(max-width: 768px) 90vw, (max-width: 1200px) 50vw, 30vw"
                   priority={true}
