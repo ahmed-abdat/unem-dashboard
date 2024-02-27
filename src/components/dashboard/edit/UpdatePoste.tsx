@@ -159,7 +159,7 @@ const removeAndUpdateThumbnail = async (oldThumbnail : Thumbnail , newThumbnail 
     setLoading(true);
     try {
       await updateThumbnail(postId!, newThumbnail);
-      await deleteThumbnail(postId! , oldThumbnail);
+      await deleteThumbnail(postId! , oldThumbnail , false);
       setTimeout(() => {
         setLoading(false);
         form.reset({

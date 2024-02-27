@@ -155,7 +155,7 @@ export const deltePosteImages = (
       return deleteObject(imageRef)
         .then(() => {
           if(thumbnail){
-            deleteThumbnail(id , thumbnail)
+            deleteThumbnail(id , thumbnail, true)
           }
           DeletePoste(id);
           console.log("image deleted");
@@ -295,12 +295,16 @@ export const updateThumbnail = async (id : string , thumbnail : Thumbnail) => {
   }
 }
 
-export const deleteThumbnail = async (id : string , thumbnail : Thumbnail) => {
+export const deleteThumbnail = async (id : string , thumbnail : Thumbnail , isDeletePoste : boolean) => {
   if(!thumbnail) return console.error("no file");
   try {
     const storage = getStorage();
     const thumbnailRef = ref(storage, `thumbnails/${id}/` + thumbnail?.name);
     await deleteObject(thumbnailRef);
+    if(isDeletePoste){
+      console.log('thumbnails delted delte poste');
+      return
+    } 
     await updateDoc(doc(firestore, "postes", id), {
       thumbnail: null,
       lasteUpdate : serverTimestamp()
