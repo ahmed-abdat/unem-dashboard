@@ -17,6 +17,12 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { toast } from "sonner"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "إدارة فضاء الطلاب",
+  description: "إدارة فضاء الطلاب في لوحة التحكم",
+}
 
 const appearanceFormSchema = z.object({
   theme: z.enum(["light", "dark"], {

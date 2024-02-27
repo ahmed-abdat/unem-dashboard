@@ -7,8 +7,8 @@ import { fetchPostes } from "@/app/action";
 import { DeleteModal } from "@/components/dashboard/DeleteModal";
 
 export const metadata: Metadata = {
-  title: "Dashboard",
-  description: "Dashboard",
+  title : 'معاينة اللوحة',
+  description: 'معاينة اللوحة',
 };
 
 export default async function DashboardPage({
