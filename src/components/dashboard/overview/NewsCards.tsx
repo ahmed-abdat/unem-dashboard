@@ -22,6 +22,7 @@ export default function NewsCards({ postes }: { postes: NewsPoste[] }) {
         });
   
         console.log("postes", postes);
+        localStorage.removeItem("poste");
         setRTpostes(postes);
       
       });
