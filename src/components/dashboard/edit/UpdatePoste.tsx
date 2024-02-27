@@ -246,6 +246,9 @@ export function UpdatePoste({ postId }: { postId: string }) {
     }
   }
 
+  console.log(thumbnail);
+  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

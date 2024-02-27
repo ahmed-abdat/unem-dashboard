@@ -36,6 +36,8 @@ export default function NewsThumbnail({
       }
     }
 
+    console.log(thumbnail);
+    
 
   const clearThumbnail = () => {
     setThumbnail(null);

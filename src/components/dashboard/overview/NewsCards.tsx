@@ -18,7 +18,18 @@ export default function NewsCards({ postes }: { postes: NewsPoste[] }) {
       const snapchot = onSnapshot(q, (querySnapshot) => {
         const postes : NewsPoste[] = [];
         querySnapshot.forEach((doc) => {
-          postes.push({ id: doc.id, ...doc.data() } as NewsPoste);
+          const data = doc.data();
+          const posteData = {
+              id: doc.id,
+              createdAt: data.createdAt.seconds,
+              lasteUpdate: data?.lasteUpdate?.seconds || null,
+              videoURL: data.videoURL,
+              thumbnail: data.thumbnail || null,
+              images: data.images || [],
+              title : data.title,
+              discribtion : data.discribtion,
+            };
+          postes.push(posteData);
         });
   
         console.log("postes", postes);
