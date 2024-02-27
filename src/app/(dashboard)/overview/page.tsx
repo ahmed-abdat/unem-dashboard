@@ -33,8 +33,8 @@ export default async function DashboardPage({
           <TabsContent value="news" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">
               <NewsCards postes={postes} />
-              <LoadMore lastDocId={lastDocId} />
             </div>
+              <LoadMore lastDocId={lastDocId} />
           </TabsContent>
         </Tabs>
       </div>

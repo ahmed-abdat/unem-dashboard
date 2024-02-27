@@ -2,12 +2,20 @@
 
 import { fetchMorePostes } from "@/app/action";
 import { NewsPoste } from "@/types/news-poste";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+} from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { cn } from "@/lib/utils";
-import NewsCards from "./NewsCards";
 import CardSkeleton from "./CardSkeleton";
 import NewCard from "./NewCard";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LoadingMore({
   lastDocId,
@@ -35,28 +43,29 @@ export default function LoadingMore({
     };
 
     if (inView && lastDocID) {
+      console.log("lastDocID", lastDocID, "inView", inView, "postes", postes);
       fetchMore(lastDocID);
     }
   }, [inView, lastDocID, postes]);
 
   return (
-    <>
-      <div
-        ref={ref}
-        className={cn({
-          "w-full h-10": lastDocID,
-          "w-full h-2 bg-transparent": !lastDocID,
-        })}
-      ></div>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">
+            <div
+              ref={ref}
+              className={cn({
+                "w-full h-10": lastDocID,
+                "w-0 h-0 hidden": !lastDocID,
+              })}
+            ></div>
       {postes.length === 0 && lastDocID ? (
-        <CardSkeleton count={3} />
+        <CardSkeleton count={6} />
       ) : (
         <>
-        {postes.map((poste: NewsPoste) => (
-          <NewCard key={poste.id} poste={poste} />
-        ))}
-      </>
+          {postes.map((poste: NewsPoste) => (
+            <NewCard key={poste.id} poste={poste} />
+          ))}
+        </>
       )}
-    </>
+    </div>
   );
 }

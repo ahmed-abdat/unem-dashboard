@@ -75,7 +75,7 @@ export const fetchPostes = async () => {
 
     if (postes.length === 0) return { postes: [], lastDocId: null };
 
-    if (postes.length <= numberOfPostes) {
+    if (postes.length < numberOfPostes) {
       return { postes, lastDocId: null };
     }
 
@@ -189,7 +189,7 @@ export const addPoste = async (poste: Poste) => {
     const storage = getStorage();
     const thumbnailRef = ref(
       storage,
-      `images/${docRef.id}/` + poste?.thumbnail?.name
+      `thumbnails/${docRef.id}/` + poste?.thumbnail?.name
     );
     if (poste?.thumbnail?.file) {
       uploadBytes(thumbnailRef, poste.thumbnail.file).then(async () => {
