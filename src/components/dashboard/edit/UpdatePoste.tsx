@@ -65,6 +65,8 @@ export function UpdatePoste({ postId }: { postId: string }) {
           router.push('overview');
           return
         }
+        console.log(poste.videoURL);
+        
         localStorage.setItem("poste", JSON.stringify(poste));
         setThumbnail(poste.thumbnail);
         setFileImages(poste.images);

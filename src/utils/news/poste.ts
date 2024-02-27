@@ -25,6 +25,8 @@ export const checkIsImagesTheSame = (
 
 
 export const isUpdatePoste = (oldPoste: NewsPoste, newPoste: Poste) => {
+  console.log(oldPoste, newPoste);
+  
     if (
         oldPoste.title.trim() !== newPoste.title.trim() ||
         oldPoste.discribtion?.trim() !== newPoste.discribtion?.trim() ||
