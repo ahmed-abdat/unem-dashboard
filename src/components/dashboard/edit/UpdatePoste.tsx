@@ -38,12 +38,12 @@ import {
 } from "@/app/action";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { isSamePoste, isUpdatePoste } from "@/utils/news/poste";
 
 // This can come from your database or API.
 export function UpdatePoste({ postId }: { postId: string }) {
-  // get the search Params}
+  const router = useRouter();
 
   const form = useForm<TNewsForm>({
     resolver: zodResolver(NewsForm),
@@ -60,7 +60,11 @@ export function UpdatePoste({ postId }: { postId: string }) {
     const fetchPostes = async () => {
       try {
         const { poste } = await getPoste(postId);
-        if (!poste) return;
+        if (!poste) {
+          toast.error("لا يمكن العثور على المنشور");
+          router.push('overview');
+          return
+        }
         localStorage.setItem("poste", JSON.stringify(poste));
         setThumbnail(poste.thumbnail);
         setFileImages(poste.images);
@@ -112,7 +116,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
       await updateImages(postId!, posteImages);
       setTimeout(() => {
         setLoading(false);
-        toast.success("تم تحديث الصور بنجاح")
+        toast.success("تم تحديث الصور بنجاح");
         form.reset({
           title: "",
           videoURL: "",
@@ -154,12 +158,15 @@ export function UpdatePoste({ postId }: { postId: string }) {
     }
   };
 
-//   remove and update thumbnail 
-const removeAndUpdateThumbnail = async (oldThumbnail : Thumbnail , newThumbnail : Thumbnail) => {
+  //   remove and update thumbnail
+  const removeAndUpdateThumbnail = async (
+    oldThumbnail: Thumbnail,
+    newThumbnail: Thumbnail
+  ) => {
     setLoading(true);
     try {
       await updateThumbnail(postId!, newThumbnail);
-      await deleteThumbnail(postId! , oldThumbnail , false);
+      await deleteThumbnail(postId!, oldThumbnail, false);
       setTimeout(() => {
         setLoading(false);
         form.reset({
@@ -215,11 +222,11 @@ const removeAndUpdateThumbnail = async (oldThumbnail : Thumbnail , newThumbnail 
         discribtion,
         videoURL,
       };
-      console.log(localePoste , posteData);
-      
+      console.log(localePoste, posteData);
+
       updatePosteInfo(updatePosteData);
-    } 
-     if (removedImages.length > 0 && notHostedImages.length > 0) {
+    }
+    if (removedImages.length > 0 && notHostedImages.length > 0) {
       console.log("both update and remove image");
       updatePosteImages(notHostedImages);
       removePosteImages(removedImages);
@@ -233,7 +240,7 @@ const removeAndUpdateThumbnail = async (oldThumbnail : Thumbnail , newThumbnail 
 
     if (localePoste.thumbnail.url !== thumbnail.url) {
       console.log("update thumbnail");
-      removeAndUpdateThumbnail(localePoste.thumbnail , thumbnail)
+      removeAndUpdateThumbnail(localePoste.thumbnail, thumbnail);
     }
   }
 

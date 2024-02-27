@@ -70,7 +70,6 @@ export function CreateNewPoste() {
       thumbnail,
       images : fileImages,
     }
-    console.log(posteData)
     if (!thumbnail?.name) {
       toast.error("يجب إضافة صورة مصغرة للمنشور");
       return;
