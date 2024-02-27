@@ -100,16 +100,16 @@ export default function NewsImages({
                 />
                 {isDragging ? (
                     <div className="flex items-center justify-center gap-x-2">
-                    <span className="font-aljazira text-[1.2rem] text-gray-700"> أفلت الصورة هنا</span>
+                    <span className="font-aljazira text-[1.2rem] text-gray-900"> أفلت الصورة هنا</span>
                     <TfiDropbox size={35} className="animate-bounce"/>
                     </div>
                 ) : (
                     <div className="flex items-center justify-center gap-x-2">
-                    <span className="text-primary-color cursor-pointer transition-all duration-75 hover:opacity-60">
+                    <span className="text-gray-800 cursor-pointer transition-all duration-75 hover:opacity-60">
                       إسحب وأفلت الصورة هنا
                     </span>
                     <span className="or">أو</span>
-                    <span className="text-primary-color cursor-pointer transition-all duration-75 hover:opacity-60">
+                    <span className="text-gray-800 cursor-pointer transition-all duration-75 hover:opacity-60">
                       تصفح
                     </span>
                     <ImagePlus size={35} />

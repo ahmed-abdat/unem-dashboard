@@ -26,7 +26,7 @@ const Page = () => {
   useEffect(() => {
     const localeUser = localStorage?.getItem("user") ?? "";
     if (localeUser) {
-      router.back();
+      router.push('overview');
       return;
     }
   }, [router]);
@@ -110,7 +110,7 @@ const Page = () => {
                     className={cn({
                       "focus-visible:ring-red-500": errors.password || error,
                     }, "font-roboto text-lg")}
-                    placeholder="Password"
+                    placeholder="********"
                   />
                   {errors?.password && (
                     <p className="text-sm text-red-500">
