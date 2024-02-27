@@ -72,7 +72,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         setFileImages(poste.images);
         form.reset({
           title: poste.title,
-          videoURL: poste.videoURL || "",
+          videoURL: poste.videoURL || null,
           discribtion: poste.discribtion,
         });
       } catch (error) {
