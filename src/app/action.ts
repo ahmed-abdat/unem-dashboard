@@ -39,7 +39,7 @@ export const getPoste = async (id: string | null) => {
           id: docSnap.id,
           createdAt: data.createdAt.seconds,
           lasteUpdate: data?.lasteUpdate?.seconds || null,
-          videoURL: docSnap.data().videURL,
+          videoURL: docSnap.data().videoURL,
           thumbnail: data.thumbnail || null,
           images: data.images || [],
           title : data.title,
