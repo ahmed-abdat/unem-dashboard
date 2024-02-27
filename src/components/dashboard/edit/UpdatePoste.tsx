@@ -38,11 +38,12 @@ import {
 } from "@/app/action";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { isSamePoste, isUpdatePoste } from "@/utils/news/poste";
 
 // This can come from your database or API.
 export function UpdatePoste({ postId }: { postId: string }) {
+
   const router = useRouter();
 
   const form = useForm<TNewsForm>({

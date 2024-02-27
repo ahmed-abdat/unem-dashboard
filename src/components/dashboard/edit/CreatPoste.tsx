@@ -25,7 +25,6 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 
-
 export function CreateNewPoste() {
   const [thumbnail, setThumbnail] = useState<Thumbnail>(null);
   const [loading, setLoading] = useState(false);
