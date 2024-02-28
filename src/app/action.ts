@@ -37,8 +37,7 @@ export const getPoste = async (id: string | null) => {
       return {
         poste: {
           id: docSnap.id,
-          createdAt: data.createdAt.seconds,
-          lasteUpdate: data?.lasteUpdate?.seconds || null,
+          summary: data?.summary || "",
           videoURL: docSnap.data().videoURL,
           thumbnail: data.thumbnail || null,
           images: data.images || [],
@@ -174,13 +173,14 @@ export const deltePosteImages = (
 // ! add poste
 
 export const addPoste = async (poste: Poste) => {
-  const { thumbnail , videoURL} = poste;
+  const { thumbnail , videoURL , summary} = poste;
   try {
     const posteData = {
       ...poste,
       thumbnail: { url: "", name: thumbnail?.name },
       images: [],
       videoURL : videoURL ? videoURL : null,
+      summary : summary ? summary : null,
       createdAt: serverTimestamp(),
       lasteUpdate: serverTimestamp(),
     };

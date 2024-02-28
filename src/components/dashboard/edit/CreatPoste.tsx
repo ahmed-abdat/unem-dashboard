@@ -61,9 +61,10 @@ export function CreateNewPoste() {
   }
 
   function onSubmit(data: TNewsForm) {
-    const {discribtion , title , videoURL} = data
+    const {discribtion , title , videoURL , summary} = data
     const posteData = {
       title,
+      summary : summary ? summary : null,
       discribtion,
       videoURL : videoURL ? videoURL : null,
       thumbnail,
@@ -92,10 +93,26 @@ export function CreateNewPoste() {
             <FormItem>
               <FormLabel>عنوان المنشور</FormLabel>
               <FormControl>
-                <Input placeholder="الإتحاد الوطني" {...field} />
+              <Textarea placeholder=" ملخص المنشور هنا"  className="resize-none min-h-20" {...field} />
               </FormControl>
               <FormDescription>
                 عنوان المنشور يجب أن لا يتجاوز 150 حرفاً
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+               <FormField
+          control={form.control}
+          name="summary"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel> ملخص عن المنشور </FormLabel>
+              <FormControl>
+                <Input placeholder=" ملخص المنشور هنا" {...field} />
+              </FormControl>
+              <FormDescription>
+                الملخص يجب أن لا يتجاوز 200 حرفاً
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -123,7 +140,7 @@ export function CreateNewPoste() {
               <FormControl>
                 <Textarea
                   placeholder="أدخل وصف المنشور هنا"
-                  className="resize-none min-h-60"
+                  className="resize-none min-h-40"
                   {...field}
                 />
               </FormControl>

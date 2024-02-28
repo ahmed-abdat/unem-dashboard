@@ -13,6 +13,7 @@ export const checkIsImagesTheSame = (
  export const isSamePoste = (oldPoste: NewsPoste, newPoste: Poste) => {
     if (
       oldPoste.title.trim() === newPoste.title.trim() &&
+      oldPoste?.summary?.trim() === newPoste?.summary?.trim() &&
       oldPoste.discribtion?.trim() === newPoste.discribtion?.trim() &&
       oldPoste?.videoURL === newPoste?.videoURL &&
       oldPoste?.thumbnail?.url === newPoste?.thumbnail?.url &&
@@ -29,6 +30,7 @@ export const isUpdatePoste = (oldPoste: NewsPoste, newPoste: Poste) => {
   
     if (
         oldPoste.title.trim() !== newPoste.title.trim() ||
+        oldPoste?.summary?.trim() !== newPoste?.summary?.trim() ||
         oldPoste.discribtion?.trim() !== newPoste.discribtion?.trim() ||
         oldPoste?.videoURL !== newPoste?.videoURL
     ){

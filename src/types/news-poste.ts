@@ -1,4 +1,4 @@
-import { Timestamp } from "firebase/firestore";
+
 
 export interface imagePoste {
   url: string;
@@ -20,6 +20,7 @@ export type Thumbnail = {
 export type Poste = {
   title: string;
   discribtion: string;
+  summary?: string | null;
   videoURL?: string | null;
   thumbnail: Thumbnail;
   images: ImageType[];
@@ -28,11 +29,10 @@ export type Poste = {
   export interface NewsPoste {
     title: string;
     discribtion: string;
+    summary?: string | null;
     images: imagePoste[];
     videoURL?: string | null;
     thumbnail: Thumbnail;
-    createdAt: Timestamp;
-    lasteUpdate : Timestamp;
     id? : string;
   }
 

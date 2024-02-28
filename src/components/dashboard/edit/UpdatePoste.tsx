@@ -66,7 +66,6 @@ export function UpdatePoste({ postId }: { postId: string }) {
           router.push('overview');
           return
         }
-        console.log(poste.videoURL);
         
         localStorage.setItem("poste", JSON.stringify(poste));
         setThumbnail(poste.thumbnail);
@@ -74,6 +73,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         form.reset({
           title: poste.title,
           videoURL: poste.videoURL || "",
+          summary: poste.summary || "",
           discribtion: poste.discribtion,
         });
       } catch (error) {
@@ -190,12 +190,13 @@ export function UpdatePoste({ postId }: { postId: string }) {
   };
 
   function onSubmit(data: TNewsForm) {
-    const { discribtion, title, videoURL } = data;
+    const { discribtion, title, videoURL , summary } = data;
     const local = localStorage.getItem("poste") || "";
     const posteData = {
       title,
       discribtion,
       videoURL,
+      summary,
       thumbnail,
       images: fileImages as ImageType[], // Cast fileImages to ImageType[]
     };
@@ -223,6 +224,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
       const updatePosteData = {
         title,
         discribtion,
+        summary,
         videoURL,
       };
       console.log(localePoste, posteData);
@@ -247,23 +249,38 @@ export function UpdatePoste({ postId }: { postId: string }) {
     }
   }
 
-  console.log(thumbnail);
   
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
+      <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
               <FormLabel>عنوان المنشور</FormLabel>
               <FormControl>
-                <Input placeholder="الإتحاد الوطني" {...field} />
+                <Input placeholder=" عنوان المنشور هنا" {...field} />
               </FormControl>
               <FormDescription>
                 عنوان المنشور يجب أن لا يتجاوز 150 حرفاً
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+                    <FormField
+          control={form.control}
+          name="summary"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel> ملخص عن المنشور </FormLabel>
+              <FormControl>
+                <Textarea placeholder=" ملخص المنشور هنا"  className="resize-none min-h-20" {...field} />
+              </FormControl>
+              <FormDescription>
+                الملخص يجب أن لا يتجاوز 200 حرفاً
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -296,7 +313,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
               <FormControl>
                 <Textarea
                   placeholder="أدخل وصف المنشور هنا"
-                  className="resize-none min-h-60"
+                  className="resize-none min-h-40"
                   {...field}
                 />
               </FormControl>

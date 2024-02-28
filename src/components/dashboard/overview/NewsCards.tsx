@@ -2,7 +2,7 @@
 import { NewsPoste } from "@/types/news-poste";
 import NewCard from "@/components/dashboard/overview/NewCard";
 import { useEffect, useState } from "react";
-import { DocumentData, collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { DocumentData, collection, onSnapshot, orderBy, query, sum } from "firebase/firestore";
 import { db } from "@/config/firebase";
 
 export default function NewsCards({ postes }: { postes: NewsPoste[] }) {
@@ -21,8 +21,7 @@ export default function NewsCards({ postes }: { postes: NewsPoste[] }) {
           const data = doc.data();
           const posteData = {
               id: doc.id,
-              createdAt: data.createdAt.seconds,
-              lasteUpdate: data?.lasteUpdate?.seconds || null,
+              summary: data?.summary || "",
               videoURL: data.videoURL,
               thumbnail: data.thumbnail || null,
               images: data.images || [],
