@@ -14,7 +14,7 @@ import Link from "next/link";
 
 export default function NewCard({ poste }: { poste: NewsPoste }) {
 
-  const mainUrl = "https://unem-dashboard.vercel.app/";
+  const mainUrl = "http://localhost:3000/";
 
 
   const url = new URL(`${mainUrl}/overview`);
