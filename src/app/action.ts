@@ -487,8 +487,6 @@ const DeleteStudentPoste = async (id: string) => {
   }
 };
 
-
-
 export const delteStudentPosteImages = (
   id: string | undefined,
   images: StudentPoste["images"],

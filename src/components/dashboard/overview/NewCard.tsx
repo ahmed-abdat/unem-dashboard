@@ -19,7 +19,7 @@ export default function NewCard({
   poste: NewsPoste;
   isStudent?: boolean;
 }) {
-  const mainUrl = "http://localhost:3000";
+  const mainUrl = "https://unem-dashboard.vercel.app";
   const posteId = isStudent ? "studetnPosteId" : "postId";
   const collectionName = isStudent ? "student-space" : "postes";
 
