@@ -19,7 +19,7 @@ export function MainNav({
       {...props}
     >
       <Link
-        href="/overview"
+        href="/overviews/news"
         className={cn({
           'text-muted-foreground' : pathname !== "/overview",
         }, "text-sm sm:text-lg font-medium transition-colors hover:text-primary")}

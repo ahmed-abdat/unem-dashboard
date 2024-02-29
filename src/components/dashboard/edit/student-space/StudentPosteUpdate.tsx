@@ -108,8 +108,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-       router.push('overview')
+        router.push('/overviews/student-space')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -133,8 +132,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-       router.push('overview')
+        router.push('/overviews/student-space')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -157,8 +155,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-       router.push('overview')
+        router.push('/overviews/student-space')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -185,8 +182,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-       router.push('overview')
+        router.push('/overviews/student-space')
       }, 1000);
     } catch (error) {
       setLoading(false);

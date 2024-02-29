@@ -23,11 +23,13 @@ import {  addStudentPoste } from "@/app/action";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { PosteStudent } from "@/types/student-space";
+import { useRouter } from "next/navigation";
 
 export function CreatStudentSpacePoste() {
   const [thumbnail, setThumbnail] = useState<Thumbnail>(null);
   const [loading, setLoading] = useState(false);
   const [fileImages, setFileImages] = useState<ImageType[]>([]);
+  const router = useRouter();
 
   const form = useForm<TStudentForm>({
     resolver: zodResolver(StudentForm),
@@ -41,16 +43,10 @@ export function CreatStudentSpacePoste() {
       setTimeout(() => {
         setLoading(false);
         toast.success("تم نشر المنشور بنجاح");
-        form.reset({
-          title: "",
-          discribtion: "",
-          videoURL: "",
-        });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 1000);
+        router.push('/overviews/student-space')
+      }, 1500);
     } catch (error) {
       setLoading(false);
       toast.error("حدث خطأ أثناء نشر المنشور");

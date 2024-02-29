@@ -101,8 +101,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        router.push('/overviews/news')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -126,8 +125,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        router.push('/overviews/news')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -150,8 +148,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        router.push('/overviews/news')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -178,8 +175,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         });
         setThumbnail(null);
         setFileImages([]);
-        // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        router.push('/overviews/news')
       }, 1000);
     } catch (error) {
       setLoading(false);

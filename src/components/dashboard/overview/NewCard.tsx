@@ -23,7 +23,7 @@ export default function NewCard({
   const posteId = isStudent ? "studetnPosteId" : "postId";
   const collectionName = isStudent ? "student-space" : "postes";
 
-  const url = new URL(`${mainUrl}/overview`);
+  const url = new URL(`${mainUrl}/overviews/${isStudent ? "student-space" : "news"}`);
   url.searchParams.set(posteId, poste?.id?.toString() ?? "0");
   url.searchParams.set("openModal", "true");
   url.searchParams.set("collectionName", collectionName);

@@ -6,7 +6,7 @@ export default async function Student() {
     const { postes, lastDocId } = await fetchPostes("student-space");
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 ">
         <NewsCards postes={postes} isStudent={true}/>
       </div>
       <LoadMore lastDocId={lastDocId} isStudent={true}/>

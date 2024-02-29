@@ -69,7 +69,7 @@ import { toast } from "sonner";
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => router.push('/overview')} className="justify-end">
+            <DropdownMenuItem onClick={() => router.push('/overviews/news')} className="justify-end">
               نظرة عامة
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push('/news')} className="justify-end">

@@ -26,7 +26,7 @@ const Page = () => {
   useEffect(() => {
     const localeUser = localStorage?.getItem("user") ?? "";
     if (localeUser) {
-      router.push('overview');
+      router.push('/overviews/news');
       return;
     }
   }, [router]);
@@ -55,7 +55,7 @@ const Page = () => {
             uid: user?.uid,
           }
           localStorage.setItem("user", JSON.stringify(userData));
-          router.push("/overview");
+          router.push("/overviews/news");
         } else  {
           toast.error(" الإيميل أو كلمة السر غير صحيحة");
         }
