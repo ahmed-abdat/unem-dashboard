@@ -24,8 +24,8 @@ export function DeleteModal({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const posteId = searchParams?.postId || null;
   const collectionName = searchParams?.collectionName as string ;
+  const posteId = collectionName === "student-space" ? searchParams?.studetnPosteId : searchParams?.postId;
   const isModalOpen = searchParams?.openModal == "true" ? true : false;
 
   const [poste, setPoste] = useState<NewsPoste | null>(null);
