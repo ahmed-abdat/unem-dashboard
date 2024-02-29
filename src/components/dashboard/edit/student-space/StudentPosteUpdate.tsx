@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import NewsImages from "./NewsPosteImages";
-
+import StudentPosteImages from "./StudentPosteImages";
+import StudentPosteThumbnail from "./StudentThumbnail";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,7 +17,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { NewsForm, TNewsForm } from "@/lib/dashboard/news-form";
-import NewsThumbnail from "./NewsThumbnail";
 import { useEffect, useState } from "react";
 import {
   ImageType,
@@ -28,21 +27,28 @@ import {
   Thumbnail,
 } from "@/types/news-poste";
 import {
-  addPoste,
+    deleteStudentThumbnail,
   deleteThumbnail,
   getPoste,
   removeImage,
+  removeStudentImages,
   updateImages,
   updatePosteData,
+  updateStudentImages,
+  updateStudentPosteData,
+  updateStudentThumbnail,
   updateThumbnail,
 } from "@/app/action";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { isSamePoste, isUpdatePoste } from "@/utils/news/poste";
+import { StudentPoste, StudentUpdate } from "@/types/student-space";
+import { TStudentForm } from "@/lib/dashboard/student-space-form";
 
 // This can come from your database or API.
 export function UpdatePoste({ postId }: { postId: string }) {
+
   const router = useRouter();
 
   const form = useForm<TNewsForm>({
@@ -56,16 +62,17 @@ export function UpdatePoste({ postId }: { postId: string }) {
     ImageType[] | NewsPoste["images"]
   >([]);
 
+
   useEffect(() => {
     const fetchPostes = async () => {
       try {
-        const { poste } = await getPoste(postId);
+        const { poste } = await getPoste(postId , 'student-space');
         if (!poste) {
           toast.error("لا يمكن العثور على المنشور");
-          router.push("overview");
-          return;
+          router.push('overview');
+          return
         }
-
+        
         localStorage.setItem("poste", JSON.stringify(poste));
         setThumbnail(poste.thumbnail);
         setFileImages(poste.images);
@@ -87,10 +94,10 @@ export function UpdatePoste({ postId }: { postId: string }) {
   }, [postId]);
 
   // update the poste data , title , discribtion , videoURL
-  const updatePosteInfo = async (posteData: NewsUpdate) => {
+  const updatePosteInfo = async (posteData: StudentUpdate) => {
     setLoading(true);
     try {
-      await updatePosteData(postId!, posteData);
+      await updateStudentPosteData(postId!, posteData);
       setTimeout(() => {
         setLoading(false);
         toast.success("تم تحديث المنشور بنجاح");
@@ -102,7 +109,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         setThumbnail(null);
         setFileImages([]);
         // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+       router.push('overview')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -115,7 +122,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
   const updatePosteImages = async (posteImages: ImageType[]) => {
     setLoading(true);
     try {
-      await updateImages(postId!, posteImages);
+      await updateStudentImages(postId!, posteImages);
       setTimeout(() => {
         setLoading(false);
         toast.success("تم تحديث الصور بنجاح");
@@ -127,7 +134,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         setThumbnail(null);
         setFileImages([]);
         // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+       router.push('overview')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -140,7 +147,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
   const removePosteImages = async (posteImages: ImageType[]) => {
     setLoading(true);
     try {
-      await removeImage(postId!, posteImages);
+      await removeStudentImages(postId!, posteImages);
       setTimeout(() => {
         setLoading(false);
         form.reset({
@@ -151,7 +158,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         setThumbnail(null);
         setFileImages([]);
         // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+       router.push('overview')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -167,8 +174,8 @@ export function UpdatePoste({ postId }: { postId: string }) {
   ) => {
     setLoading(true);
     try {
-      await updateThumbnail(postId!, newThumbnail);
-      await deleteThumbnail(postId!, oldThumbnail, false);
+      await updateStudentThumbnail(postId!, newThumbnail);
+      await deleteStudentThumbnail(postId!, oldThumbnail, false);
       setTimeout(() => {
         setLoading(false);
         form.reset({
@@ -179,7 +186,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         setThumbnail(null);
         setFileImages([]);
         // scroll to top smoothly
-        window.scrollTo({ top: 0, behavior: "smooth" });
+       router.push('overview')
       }, 1000);
     } catch (error) {
       setLoading(false);
@@ -188,8 +195,8 @@ export function UpdatePoste({ postId }: { postId: string }) {
     }
   };
 
-  function onSubmit(data: TNewsForm) {
-    const { discribtion, title, videoURL, summary } = data;
+  function onSubmit(data: TStudentForm) {
+    const { discribtion, title, videoURL , summary } = data;
     const local = localStorage.getItem("poste") || "";
     const posteData = {
       title,
@@ -226,7 +233,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
         summary,
         videoURL,
       };
-      console.log(localePoste, posteData);
+      console.log(localePoste, posteData , isUpdatePoste(localePoste, posteData));
 
       updatePosteInfo(updatePosteData);
     }
@@ -248,21 +255,19 @@ export function UpdatePoste({ postId }: { postId: string }) {
     }
   }
 
+  
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
+      <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
               <FormLabel>عنوان المنشور</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder=" عنوان المنشور هنا "
-                  className="resize-none min-h-10"
-                  {...field}
-                />
+              <Textarea placeholder=" عنوان المنشور هنا "  className="resize-none min-h-10" {...field} />
               </FormControl>
               <FormDescription>
                 عنوان المنشور يجب أن لا يتجاوز 150 حرفاً
@@ -271,18 +276,14 @@ export function UpdatePoste({ postId }: { postId: string }) {
             </FormItem>
           )}
         />
-        <FormField
+               <FormField
           control={form.control}
           name="summary"
           render={({ field }) => (
             <FormItem>
               <FormLabel> ملخص عن المنشور </FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder=" ملخص المنشور هنا"
-                  className="resize-none min-h-20"
-                  {...field}
-                />
+              <Textarea placeholder=" ملخص المنشور هنا"  className="resize-none min-h-20" {...field} />
               </FormControl>
               <FormDescription>
                 الملخص يجب أن لا يتجاوز 200 حرفاً
@@ -326,13 +327,13 @@ export function UpdatePoste({ postId }: { postId: string }) {
             </FormItem>
           )}
         />
-        <NewsThumbnail setThumbnail={setThumbnail} thumbnail={thumbnail} />
+        <StudentPosteThumbnail setThumbnail={setThumbnail} thumbnail={thumbnail} />
         {!thumbnail && (
           <p className="text-sm text-red-500">
             الرجاء اختيار صورة مصغرة للمنشور
           </p>
         )}
-        <NewsImages
+        <StudentPosteImages
           fileImages={fileImages as ImageType[]}
           setFileImages={setFileImages}
         />

@@ -4,15 +4,16 @@ import NewCard from "@/components/dashboard/overview/NewCard";
 import { useEffect, useState } from "react";
 import { DocumentData, collection, onSnapshot, orderBy, query, sum } from "firebase/firestore";
 import { db } from "@/config/firebase";
+import { StudentPoste } from "@/types/student-space";
 
-export default function NewsCards({ postes }: { postes: NewsPoste[] }) {
+export default function NewsCards({ postes , isStudent }: { postes: NewsPoste[] , isStudent? : boolean}) {
 
   const [ RTpostes , setRTpostes] = useState<NewsPoste[]>(postes);
   
     useEffect(() => {
       // get real time updates from firebase 
       const q = query(
-        collection(db, "postes"),
+        collection(db, isStudent ? "student-space" : "postes"),
         orderBy("createdAt", "desc")
       );
       const snapchot = onSnapshot(q, (querySnapshot) => {
@@ -31,7 +32,7 @@ export default function NewsCards({ postes }: { postes: NewsPoste[] }) {
           postes.push(posteData);
         });
   
-        console.log("postes", postes);
+        console.log(`${isStudent ? 'student-space' : 'postes'}`, postes);
         localStorage.removeItem("poste");
         setRTpostes(postes);
       
@@ -46,8 +47,8 @@ export default function NewsCards({ postes }: { postes: NewsPoste[] }) {
 
   return (
     <>
-      {RTpostes.map((poste: NewsPoste) => (
-        <NewCard key={poste.id} poste={poste} />
+      {RTpostes.map((poste: StudentPoste) => (
+        <NewCard key={poste.id} poste={poste} isStudent={isStudent ? true : false}/>
       ))}
     </>
   );

@@ -19,8 +19,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LoadingMore({
   lastDocId,
+  isStudent,
 }: {
   lastDocId: string | null;
+  isStudent?: boolean;
 }) {
   const { ref, inView } = useInView();
 
@@ -29,7 +31,7 @@ export default function LoadingMore({
 
   useEffect(() => {
     const fetchMore = async (lastDoc: string) => {
-      const { otherPostes, id } = await fetchMorePostes({ lastDocId: lastDoc });
+      const { otherPostes, id } = await fetchMorePostes({ lastDocId: lastDoc , collectionName : isStudent ? "student-space" : "postes"});
 
       if (id) {
         setlastDocID(id);

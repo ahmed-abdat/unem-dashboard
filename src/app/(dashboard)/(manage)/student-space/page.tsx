@@ -1,18 +1,23 @@
 import { Separator } from "@/components/ui/separator";
-import { CreateNewPoste } from "@/components/dashboard/edit/CreatPoste";
+import {CreatStudentSpacePoste} from '@/components/dashboard/edit/student-space/CreatStudentSpacePoste'
+import {UpdatePoste} from '@/components/dashboard/edit/student-space/StudentPosteUpdate'
 
-export default function SettingsAppearancePage() {
+export default function StudentSpace({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
+  const studetnPosteId = searchParams.studetnPosteId;
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-medium">Appearance</h3>
+        <h3 className="text-lg font-medium"> فضاء الطالب </h3>
         <p className="text-sm text-muted-foreground">
-          Customize the appearance of the app. Automatically switch between day
-          and night themes.
+          إنشاء وتعديل المنشورات والمقالات الخاصة بفضاء الطالب
         </p>
       </div>
       <Separator />
-      <CreateNewPoste />
+      {studetnPosteId ? <UpdatePoste postId={studetnPosteId as string} /> : <CreatStudentSpacePoste />}
     </div>
   );
 }

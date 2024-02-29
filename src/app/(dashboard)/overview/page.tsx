@@ -1,10 +1,11 @@
 import { Metadata } from "next";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NewsCards from "@/components/dashboard/overview/NewsCards";
-import LoadMore from "@/components/dashboard/overview/LoadMoreNews";
+
 import { fetchPostes } from "@/app/action";
 import { DeleteModal } from "@/components/dashboard/DeleteModal";
+import Poste from "@/components/dashboard/overview/poste/Poste";
+import Student from "@/components/dashboard/overview/student-space/Student";
 
 export const metadata: Metadata = {
   title : 'معاينة اللوحة',
@@ -16,7 +17,6 @@ export default async function DashboardPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { postes, lastDocId } = await fetchPostes();
   return (
     <>
       <DeleteModal searchParams={searchParams}/>
@@ -31,10 +31,10 @@ export default async function DashboardPage({
             <TabsTrigger value="faculiter">مؤسسات التعليم العالي</TabsTrigger>
           </TabsList>
           <TabsContent value="news" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">
-              <NewsCards postes={postes} />
-            </div>
-              <LoadMore lastDocId={lastDocId} />
+            <Poste />
+          </TabsContent>
+          <TabsContent value="student-space" className="space-y-4">
+            <Student />
           </TabsContent>
         </Tabs>
       </div>

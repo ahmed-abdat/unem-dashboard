@@ -2,8 +2,9 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import NewsImages from "./NewsPosteImages";
-
+import { StudentForm, TStudentForm } from "@/lib/dashboard/student-space-form";
+import StudentPosteImages from "@/components/dashboard/edit/student-space/StudentPosteImages";
+import StudnetPosteThumbnail from "@/components/dashboard/edit/student-space/StudentThumbnail";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -16,60 +17,57 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { NewsForm, TNewsForm } from "@/lib/dashboard/news-form";
-import NewsThumbnail from "./NewsThumbnail";
 import { useState } from "react";
-import { ImageType, Poste, Thumbnail } from "@/types/news-poste";
-import { addPoste } from "@/app/action";
+import { ImageType, Thumbnail } from "@/types/news-poste";
+import {  addStudentPoste } from "@/app/action";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { PosteStudent } from "@/types/student-space";
 
-
-export function CreateNewPoste() {
+export function CreatStudentSpacePoste() {
   const [thumbnail, setThumbnail] = useState<Thumbnail>(null);
   const [loading, setLoading] = useState(false);
   const [fileImages, setFileImages] = useState<ImageType[]>([]);
 
-
-  const form = useForm<TNewsForm>({
-    resolver: zodResolver(NewsForm),
+  const form = useForm<TStudentForm>({
+    resolver: zodResolver(StudentForm),
     mode: "onChange",
   });
 
-  const addPosteToDataBase = async (posteData : Poste) => {
-    setLoading(true)
-      try {
-        await addPoste(posteData)
-        setTimeout(() => {
-          setLoading(false)
-          toast.success("تم نشر المنشور بنجاح")
-          form.reset({
-            title: "",
-            discribtion: "",
-            videoURL: "",
-          });
-          setThumbnail(null)
-          setFileImages([])
-          // scroll to top smothly
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 1000);
-      } catch (error) {
-        setLoading(false)
-        toast.error("حدث خطأ أثناء نشر المنشور")
-        console.log(error)
-      }
-  }
+  const addPosteToDataBase = async (posteData: PosteStudent) => {
+    setLoading(true);
+    try {
+      await addStudentPoste(posteData);
+      setTimeout(() => {
+        setLoading(false);
+        toast.success("تم نشر المنشور بنجاح");
+        form.reset({
+          title: "",
+          discribtion: "",
+          videoURL: "",
+        });
+        setThumbnail(null);
+        setFileImages([]);
+        // scroll to top smothly
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 1000);
+    } catch (error) {
+      setLoading(false);
+      toast.error("حدث خطأ أثناء نشر المنشور");
+      console.log(error);
+    }
+  };
 
-  function onSubmit(data: TNewsForm) {
-    const {discribtion , title , videoURL , summary} = data
+  function onSubmit(data: TStudentForm) {
+    const { discribtion, title, videoURL, summary } = data;
     const posteData = {
       title,
-      summary : summary ? summary : null,
+      summary: summary ? summary : null,
       discribtion,
-      videoURL : videoURL ? videoURL : null,
+      videoURL: videoURL ? videoURL : null,
       thumbnail,
-      images : fileImages,
-    }
+      images: fileImages,
+    };
     if (!thumbnail?.name) {
       toast.error("يجب إضافة صورة مصغرة للمنشور");
       return;
@@ -78,15 +76,17 @@ export function CreateNewPoste() {
       toast.error("يجب إضافة صورة واحدة على الأقل");
       return;
     }
-    setLoading(true)
-    addPosteToDataBase(posteData)
 
+    console.log(posteData);
+    
+    setLoading(true);
+    addPosteToDataBase(posteData);
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
+      <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
@@ -148,7 +148,7 @@ export function CreateNewPoste() {
             </FormItem>
           )}
         />
-           <NewsThumbnail
+        <StudnetPosteThumbnail
           setThumbnail={setThumbnail}
           thumbnail={thumbnail}
         />
@@ -157,13 +157,20 @@ export function CreateNewPoste() {
             الرجاء اختيار صورة مصغرة للمنشور
           </p>
         )}
-        <NewsImages  fileImages={fileImages} setFileImages={setFileImages}/>
+        <StudentPosteImages
+          fileImages={fileImages}
+          setFileImages={setFileImages}
+        />
         {fileImages.length === 0 && (
           <p className="text-sm text-red-500">
             الرجاء اختيار صورة واحدة على الأقل للمنشور
           </p>
         )}
-        <Button type="submit" className="w-full mx-auto md:max-w-full text-lg" disabled={loading}>
+        <Button
+          type="submit"
+          className="w-full mx-auto md:max-w-full text-lg"
+          disabled={loading}
+        >
           نشر الخبر
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         </Button>

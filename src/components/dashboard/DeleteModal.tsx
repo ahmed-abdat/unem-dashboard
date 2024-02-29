@@ -1,6 +1,6 @@
 "use client";
 
-import { deltePosteImages, getPoste } from "@/app/action";
+import { deltePosteImages, delteStudentPosteImages, getPoste } from "@/app/action";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -25,6 +25,7 @@ export function DeleteModal({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const posteId = searchParams?.postId || null;
+  const collectionName = searchParams?.collectionName as string ;
   const isModalOpen = searchParams?.openModal == "true" ? true : false;
 
   const [poste, setPoste] = useState<NewsPoste | null>(null);
@@ -39,7 +40,11 @@ export function DeleteModal({
   const handelDeletePoste = () => {
     setLoading(true);
     try {
+      if(collectionName === "student-space"){
+        delteStudentPosteImages(poste?.id, poste?.images ?? [], poste?.thumbnail ?? null);
+      }else{
       deltePosteImages(poste?.id, poste?.images ?? [], poste?.thumbnail ?? null);
+      }
       router.refresh();
       setTimeout(() => {
         toast.success("تم حذف المنشور بنجاح");
@@ -56,7 +61,7 @@ export function DeleteModal({
   
   useEffect(() => {
     const handelGetPoste = async (id: string) => {
-      const { poste } = await getPoste(id);
+      const { poste } = await getPoste(id, collectionName || "postes");
       if (!poste) {
           toast.error('المنشور غير موجود')
           router.back();
@@ -82,7 +87,7 @@ export function DeleteModal({
           {poste ? (
             <div className="flex flex-col w-full h-full gap-y-4">
               <Image
-                src={poste?.images[0]?.url || "/logo.png"}
+                src={poste?.thumbnail?.url || poste?.images[0]?.url}
                 alt={poste?.images[0]?.name || "thumbnail"}
                 width={200}
                 height={200}

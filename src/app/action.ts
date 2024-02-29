@@ -24,12 +24,13 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
+import {StudentPoste , PosteStudent, StudentUpdate} from '@/types/student-space'
 
 const firestore = getFirestore(app);
 
-export const getPoste = async (id: string | null) => {
+export const getPoste = async (id: string | null , collectionName : string = 'postes') => {
   if (!id) return { poste: null, docSnap: null };
-  const docRef = doc(firestore, "postes", id);
+  const docRef = doc(firestore,collectionName, id);
   try {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -57,11 +58,11 @@ export const getPoste = async (id: string | null) => {
   }
 };
 
-export const fetchPostes = async () => {
+export const fetchPostes = async (collectionName : string = 'postes') => {
   const numberOfPostes = 10;
   try {
     const q = query(
-      collection(firestore, "postes"),
+      collection(firestore, collectionName),
       orderBy("createdAt", "desc"),
       limit(numberOfPostes)
     );
@@ -88,8 +89,10 @@ export const fetchPostes = async () => {
 
 export const fetchMorePostes = async ({
   lastDocId,
+  collectionName = 'postes'
 }: {
   lastDocId: string | null;
+  collectionName?: string;
 }): Promise<{ otherPostes: NewsPoste[]; id: null | string }> => {
   console.log("fetchMorePostes", lastDocId);
   const numberOfPostesToFetch = 6;
@@ -102,7 +105,7 @@ export const fetchMorePostes = async ({
     if (!docSnap) return { otherPostes: [], id: null };
 
     const q = query(
-      collection(firestore, "postes"),
+      collection(firestore, collectionName),
       orderBy("createdAt", "desc"),
       startAfter(docSnap),
       limit(numberOfPostesToFetch)
@@ -129,9 +132,9 @@ export const fetchMorePostes = async ({
 // ! delete poste
 const storage = getStorage();
 
-const DeletePoste = async (id: string) => {
+const DeletePoste = async (id: string, collectionName : string = 'postes') => {
   try {
-    await deleteDoc(doc(firestore, `postes/${id}`));
+    await deleteDoc(doc(firestore, `${collectionName}/${id}`));
     console.log("Document successfully deleted");
   } catch (error) {
     console.log("Error removing document: ", error);
@@ -316,3 +319,200 @@ export const deleteThumbnail = async (id : string , thumbnail : Thumbnail , isDe
     console.error(error);
   }
 }
+
+
+
+
+
+
+
+
+
+// ! add student poste
+
+export const addStudentPoste = async (poste: PosteStudent) => {
+  const { thumbnail , videoURL , summary} = poste;
+  try {
+    const posteData = {
+      ...poste,
+      thumbnail: { url: "", name: thumbnail?.name },
+      images: [],
+      videoURL : videoURL ? videoURL : null,
+      summary : summary ? summary : null,
+      createdAt: serverTimestamp(),
+      lasteUpdate: serverTimestamp(),
+    };
+    const docRef = await addDoc(collection(firestore, "student-space"), posteData);
+    console.log("poste added");
+
+    // add thumbnail file image to storage
+    const storage = getStorage();
+    const thumbnailRef = ref(
+      storage,
+      `student-thumbnails/${docRef.id}/` + poste?.thumbnail?.name
+    );
+    if (poste?.thumbnail?.file) {
+      uploadBytes(thumbnailRef, poste.thumbnail.file).then(async () => {
+        const downloadURL = await getDownloadURL(thumbnailRef);
+        await updateDoc(docRef, {
+          thumbnail: { url: downloadURL, name: poste?.thumbnail?.name },
+        });
+      });
+    }
+
+    Promise.all(
+      poste.images.map((image) => {
+        const storage = getStorage();
+        const imageRef = ref(storage, `student-images/${docRef.id}/` + image.file.name);
+        uploadBytes(imageRef, image.file).then(async () => {
+          const downloadURL = await getDownloadURL(imageRef);
+          await updateDoc(docRef, {
+            images: arrayUnion({ url: downloadURL, name: image.file.name }),
+          });
+        });
+      })
+    )
+      .then(() => {
+        console.log("images added");
+        return { success: true, id: docRef.id };
+      })
+      .catch((error) => {
+        console.log(error);
+        return { success: false, id: null };
+      });
+  } catch (error) {
+    console.log(error);
+    return { success: false, id: null };
+  }
+};
+
+
+// ! update student poste
+
+export const updateStudentPosteData = async (id : string ,posteData : StudentUpdate) => {
+  try {
+    await updateDoc(doc(firestore, "student-space", id), posteData);
+    console.log("poste updated");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ? update poste student images 
+export const updateStudentImages = async (id : string,notHostedImages : ImageType[]) => {
+  try {
+    await Promise.all(
+      notHostedImages.map(async (image) => {
+        const storage = getStorage();
+        const imageRef = ref(storage, `student-images/${id}/` + image.file.name);
+        await uploadBytes(imageRef, image.file);
+        const downloadURL = await getDownloadURL(imageRef);
+        await updateDoc(doc(firestore, "student-space", id), {
+          images: arrayUnion({ url : downloadURL, name : image.file.name }),
+          lasteUpdate : serverTimestamp()
+        });
+      })
+    )
+    console.log("images updated");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// ? remove poste student images 
+export const removeStudentImages = async (id : string , removeImages : imagePoste[]) => {
+  try {
+    Promise.all(
+      removeImages.map(async (image) => {
+        await updateDoc(doc(firestore, "student-images", id), {
+          images: arrayRemove(image),
+          lasteUpdate : serverTimestamp()
+        });
+      })
+    )
+    console.log("images removed");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// ? update thumbnail
+export const updateStudentThumbnail = async (id : string , thumbnail : Thumbnail) => {
+  if(!thumbnail?.file) return console.error("no file");
+  try {
+    const storage = getStorage();
+    const thumbnailRef = ref(storage, `student-thumbnails/${id}/` + thumbnail?.file.name);
+    await uploadBytes(thumbnailRef, thumbnail?.file);
+    const downloadURL = await getDownloadURL(thumbnailRef);
+    await updateDoc(doc(firestore, "student-space", id), {
+      thumbnail: { url: downloadURL, name: thumbnail?.file.name },
+      lasteUpdate : serverTimestamp()
+    });
+    console.log("thumbnail updated");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export const deleteStudentThumbnail = async (id : string , thumbnail : Thumbnail , isDeletePoste : boolean) => {
+  if(!thumbnail) return console.error("no file");
+  try {
+    const storage = getStorage();
+    const thumbnailRef = ref(storage, `student-thumbnails/${id}/` + thumbnail?.name);
+    await deleteObject(thumbnailRef);
+    if(isDeletePoste){
+      console.log('student-thumbnails delted delte poste');
+      return
+    } 
+    await updateDoc(doc(firestore, "postes", id), {
+      thumbnail: null,
+      lasteUpdate : serverTimestamp()
+    });
+    console.log("thumbnail deleted");
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
+// ! delete student poste 
+const DeleteStudentPoste = async (id: string) => {
+  try {
+    await deleteDoc(doc(firestore, `student-space/${id}`));
+    console.log("Document successfully deleted student");
+  } catch (error) {
+    console.log("Error removing document student: ", error);
+
+    console.log(error);
+  }
+};
+
+
+
+export const delteStudentPosteImages = (
+  id: string | undefined,
+  images: StudentPoste["images"],
+  thumbnail : StudentPoste["thumbnail"] 
+) => {
+  console.log(thumbnail , images , 'delete student poste ?');
+  
+  if (!id) return;
+  Promise.allSettled(
+    images.map(async (img) => {
+      const imageRef = ref(storage, `student-images/${id}/` + img.name);
+      return deleteObject(imageRef)
+        .then(() => {
+          if(thumbnail){
+            deleteThumbnail(id , thumbnail, true)
+          }
+          DeleteStudentPoste(id);
+          console.log("image deleted");
+        })
+        .catch((error) => {
+          DeleteStudentPoste(id);
+          console.log("image not deleted");
+          console.log(error);
+        });
+    })
+  );
+};

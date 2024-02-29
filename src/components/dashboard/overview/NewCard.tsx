@@ -12,17 +12,27 @@ import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
 import Link from "next/link";
 
-export default function NewCard({ poste }: { poste: NewsPoste }) {
-
-  const mainUrl = "https://unem-dashboard.vercel.app/";
-
+export default function NewCard({
+  poste,
+  isStudent,
+}: {
+  poste: NewsPoste;
+  isStudent?: boolean;
+}) {
+  const mainUrl = "http://localhost:3000";
+  const posteId = isStudent ? "studetnPosteId" : "postId";
+  const collectionName = isStudent ? "student-space" : "postes";
 
   const url = new URL(`${mainUrl}/overview`);
-  url.searchParams.set("postId", poste?.id?.toString() ?? "0");
+  url.searchParams.set(posteId, poste?.id?.toString() ?? "0");
   url.searchParams.set("openModal", "true");
+  url.searchParams.set("collectionName", collectionName);
 
-  const updateUrl = new URL(`${mainUrl}/news`);
-  updateUrl.searchParams.set("postId", poste?.id?.toString() ?? "0");
+  const updateUrl = new URL(
+    `${mainUrl}/${isStudent ? "student-space" : "news"}`
+  );
+  updateUrl.searchParams.set(posteId, poste?.id?.toString() ?? "0");
+  updateUrl.searchParams.set("collectionName", collectionName);
 
   return (
     <Card key={poste.id} className="flex flex-col justify-between">
