@@ -1,5 +1,12 @@
 import { app } from "@/config/firebase";
-import { ImageType, NewsPoste, NewsUpdate, Poste, Thumbnail, imagePoste } from "@/types/news-poste";
+import {
+  ImageType,
+  NewsPoste,
+  NewsUpdate,
+  Poste,
+  Thumbnail,
+  imagePoste,
+} from "@/types/news-poste";
 import {
   collection,
   getFirestore,
@@ -16,6 +23,9 @@ import {
   arrayUnion,
   serverTimestamp,
   arrayRemove,
+  where,
+  setDoc,
+  DocumentReference,
 } from "firebase/firestore/lite";
 import {
   getStorage,
@@ -24,13 +34,23 @@ import {
   uploadBytes,
   getDownloadURL,
 } from "firebase/storage";
-import {StudentPoste , PosteStudent, StudentUpdate} from '@/types/student-space'
+import {
+  StudentPoste,
+  PosteStudent,
+  StudentUpdate,
+} from "@/types/student-space";
+import { any } from "zod";
+import { faculiters, optionType } from "@/constant/filiers";
+import { Filiers } from "@/types/filiers-tabel";
 
 const firestore = getFirestore(app);
 
-export const getPoste = async (id: string | null , collectionName : string = 'postes') => {
+export const getPoste = async (
+  id: string | null,
+  collectionName: string = "postes"
+) => {
   if (!id) return { poste: null, docSnap: null };
-  const docRef = doc(firestore,collectionName, id);
+  const docRef = doc(firestore, collectionName, id);
   try {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -42,9 +62,8 @@ export const getPoste = async (id: string | null , collectionName : string = 'po
           videoURL: docSnap.data().videoURL,
           thumbnail: data.thumbnail || null,
           images: data.images || [],
-          title : data.title,
-          discribtion : data.discribtion,
-
+          title: data.title,
+          discribtion: data.discribtion,
         },
         docSnap,
       };
@@ -58,7 +77,7 @@ export const getPoste = async (id: string | null , collectionName : string = 'po
   }
 };
 
-export const fetchPostes = async (collectionName : string = 'postes') => {
+export const fetchPostes = async (collectionName: string = "postes") => {
   const numberOfPostes = 10;
   try {
     const q = query(
@@ -89,7 +108,7 @@ export const fetchPostes = async (collectionName : string = 'postes') => {
 
 export const fetchMorePostes = async ({
   lastDocId,
-  collectionName = 'postes'
+  collectionName = "postes",
 }: {
   lastDocId: string | null;
   collectionName?: string;
@@ -132,7 +151,7 @@ export const fetchMorePostes = async ({
 // ! delete poste
 const storage = getStorage();
 
-const DeletePoste = async (id: string, collectionName : string = 'postes') => {
+const DeletePoste = async (id: string, collectionName: string = "postes") => {
   try {
     await deleteDoc(doc(firestore, `${collectionName}/${id}`));
     console.log("Document successfully deleted");
@@ -143,23 +162,21 @@ const DeletePoste = async (id: string, collectionName : string = 'postes') => {
   }
 };
 
-
-
 export const deltePosteImages = (
   id: string | undefined,
   images: NewsPoste["images"],
-  thumbnail : NewsPoste["thumbnail"] 
+  thumbnail: NewsPoste["thumbnail"]
 ) => {
-  console.log(thumbnail , images , 'delete poste ?');
-  
+  console.log(thumbnail, images, "delete poste ?");
+
   if (!id) return;
   Promise.allSettled(
     images.map(async (img) => {
       const imageRef = ref(storage, `images/${id}/` + img.name);
       return deleteObject(imageRef)
         .then(() => {
-          if(thumbnail){
-            deleteThumbnail(id , thumbnail, true)
+          if (thumbnail) {
+            deleteThumbnail(id, thumbnail, true);
           }
           DeletePoste(id);
           console.log("image deleted");
@@ -176,14 +193,14 @@ export const deltePosteImages = (
 // ! add poste
 
 export const addPoste = async (poste: Poste) => {
-  const { thumbnail , videoURL , summary} = poste;
+  const { thumbnail, videoURL, summary } = poste;
   try {
     const posteData = {
       ...poste,
       thumbnail: { url: "", name: thumbnail?.name },
       images: [],
-      videoURL : videoURL ? videoURL : null,
-      summary : summary ? summary : null,
+      videoURL: videoURL ? videoURL : null,
+      summary: summary ? summary : null,
       createdAt: serverTimestamp(),
       lasteUpdate: serverTimestamp(),
     };
@@ -232,10 +249,9 @@ export const addPoste = async (poste: Poste) => {
   }
 };
 
-
 // ! update poste
 
-export const updatePosteData = async (id : string ,posteData : NewsUpdate) => {
+export const updatePosteData = async (id: string, posteData: NewsUpdate) => {
   try {
     await updateDoc(doc(firestore, "postes", id), posteData);
     console.log("poste updated");
@@ -244,8 +260,11 @@ export const updatePosteData = async (id : string ,posteData : NewsUpdate) => {
   }
 };
 
-// ? update poste images 
-export const updateImages = async (id : string,notHostedImages : ImageType[]) => {
+// ? update poste images
+export const updateImages = async (
+  id: string,
+  notHostedImages: ImageType[]
+) => {
   try {
     await Promise.all(
       notHostedImages.map(async (image) => {
@@ -254,95 +273,97 @@ export const updateImages = async (id : string,notHostedImages : ImageType[]) =>
         await uploadBytes(imageRef, image.file);
         const downloadURL = await getDownloadURL(imageRef);
         await updateDoc(doc(firestore, "postes", id), {
-          images: arrayUnion({ url : downloadURL, name : image.file.name }),
-          lasteUpdate : serverTimestamp()
+          images: arrayUnion({ url: downloadURL, name: image.file.name }),
+          lasteUpdate: serverTimestamp(),
         });
       })
-    )
+    );
     console.log("images updated");
   } catch (error) {
     console.log(error);
   }
 };
 
-// ? remove poste images 
-export const removeImage = async (id : string , removeImages : imagePoste[]) => {
+// ? remove poste images
+export const removeImage = async (id: string, removeImages: imagePoste[]) => {
   try {
     Promise.all(
       removeImages.map(async (image) => {
         await updateDoc(doc(firestore, "postes", id), {
           images: arrayRemove(image),
-          lasteUpdate : serverTimestamp()
+          lasteUpdate: serverTimestamp(),
         });
       })
-    )
+    );
     console.log("images removed");
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // ? update thumbnail
-export const updateThumbnail = async (id : string , thumbnail : Thumbnail) => {
-  if(!thumbnail?.file) return console.error("no file");
+export const updateThumbnail = async (id: string, thumbnail: Thumbnail) => {
+  if (!thumbnail?.file) return console.error("no file");
   try {
     const storage = getStorage();
-    const thumbnailRef = ref(storage, `thumbnails/${id}/` + thumbnail?.file.name);
+    const thumbnailRef = ref(
+      storage,
+      `thumbnails/${id}/` + thumbnail?.file.name
+    );
     await uploadBytes(thumbnailRef, thumbnail?.file);
     const downloadURL = await getDownloadURL(thumbnailRef);
     await updateDoc(doc(firestore, "postes", id), {
       thumbnail: { url: downloadURL, name: thumbnail?.file.name },
-      lasteUpdate : serverTimestamp()
+      lasteUpdate: serverTimestamp(),
     });
     console.log("thumbnail updated");
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-export const deleteThumbnail = async (id : string , thumbnail : Thumbnail , isDeletePoste : boolean) => {
-  if(!thumbnail) return console.error("no file");
+export const deleteThumbnail = async (
+  id: string,
+  thumbnail: Thumbnail,
+  isDeletePoste: boolean
+) => {
+  if (!thumbnail) return console.error("no file");
   try {
     const storage = getStorage();
     const thumbnailRef = ref(storage, `thumbnails/${id}/` + thumbnail?.name);
     await deleteObject(thumbnailRef);
-    if(isDeletePoste){
-      console.log('thumbnails delted delte poste');
-      return
-    } 
+    if (isDeletePoste) {
+      console.log("thumbnails delted delte poste");
+      return;
+    }
     await updateDoc(doc(firestore, "postes", id), {
       thumbnail: null,
-      lasteUpdate : serverTimestamp()
+      lasteUpdate: serverTimestamp(),
     });
     console.log("thumbnail deleted");
   } catch (error) {
     console.error(error);
   }
-}
-
-
-
-
-
-
-
-
+};
 
 // ! add student poste
 
 export const addStudentPoste = async (poste: PosteStudent) => {
-  const { thumbnail , videoURL , summary} = poste;
+  const { thumbnail, videoURL, summary } = poste;
   try {
     const posteData = {
       ...poste,
       thumbnail: { url: "", name: thumbnail?.name },
       images: [],
-      videoURL : videoURL ? videoURL : null,
-      summary : summary ? summary : null,
+      videoURL: videoURL ? videoURL : null,
+      summary: summary ? summary : null,
       createdAt: serverTimestamp(),
       lasteUpdate: serverTimestamp(),
     };
-    const docRef = await addDoc(collection(firestore, "student-space"), posteData);
+    const docRef = await addDoc(
+      collection(firestore, "student-space"),
+      posteData
+    );
     console.log("poste added");
 
     // add thumbnail file image to storage
@@ -363,7 +384,10 @@ export const addStudentPoste = async (poste: PosteStudent) => {
     Promise.all(
       poste.images.map((image) => {
         const storage = getStorage();
-        const imageRef = ref(storage, `student-images/${docRef.id}/` + image.file.name);
+        const imageRef = ref(
+          storage,
+          `student-images/${docRef.id}/` + image.file.name
+        );
         uploadBytes(imageRef, image.file).then(async () => {
           const downloadURL = await getDownloadURL(imageRef);
           await updateDoc(docRef, {
@@ -386,10 +410,12 @@ export const addStudentPoste = async (poste: PosteStudent) => {
   }
 };
 
-
 // ! update student poste
 
-export const updateStudentPosteData = async (id : string ,posteData : StudentUpdate) => {
+export const updateStudentPosteData = async (
+  id: string,
+  posteData: StudentUpdate
+) => {
   try {
     await updateDoc(doc(firestore, "student-space", id), posteData);
     console.log("poste updated");
@@ -398,84 +424,105 @@ export const updateStudentPosteData = async (id : string ,posteData : StudentUpd
   }
 };
 
-// ? update poste student images 
-export const updateStudentImages = async (id : string,notHostedImages : ImageType[]) => {
+// ? update poste student images
+export const updateStudentImages = async (
+  id: string,
+  notHostedImages: ImageType[]
+) => {
   try {
     await Promise.all(
       notHostedImages.map(async (image) => {
         const storage = getStorage();
-        const imageRef = ref(storage, `student-images/${id}/` + image.file.name);
+        const imageRef = ref(
+          storage,
+          `student-images/${id}/` + image.file.name
+        );
         await uploadBytes(imageRef, image.file);
         const downloadURL = await getDownloadURL(imageRef);
         await updateDoc(doc(firestore, "student-space", id), {
-          images: arrayUnion({ url : downloadURL, name : image.file.name }),
-          lasteUpdate : serverTimestamp()
+          images: arrayUnion({ url: downloadURL, name: image.file.name }),
+          lasteUpdate: serverTimestamp(),
         });
       })
-    )
+    );
     console.log("images updated");
   } catch (error) {
     console.log(error);
   }
 };
 
-// ? remove poste student images 
-export const removeStudentImages = async (id : string , removeImages : imagePoste[]) => {
+// ? remove poste student images
+export const removeStudentImages = async (
+  id: string,
+  removeImages: imagePoste[]
+) => {
   try {
     Promise.all(
       removeImages.map(async (image) => {
         await updateDoc(doc(firestore, "student-images", id), {
           images: arrayRemove(image),
-          lasteUpdate : serverTimestamp()
+          lasteUpdate: serverTimestamp(),
         });
       })
-    )
+    );
     console.log("images removed");
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 // ? update thumbnail
-export const updateStudentThumbnail = async (id : string , thumbnail : Thumbnail) => {
-  if(!thumbnail?.file) return console.error("no file");
+export const updateStudentThumbnail = async (
+  id: string,
+  thumbnail: Thumbnail
+) => {
+  if (!thumbnail?.file) return console.error("no file");
   try {
     const storage = getStorage();
-    const thumbnailRef = ref(storage, `student-thumbnails/${id}/` + thumbnail?.file.name);
+    const thumbnailRef = ref(
+      storage,
+      `student-thumbnails/${id}/` + thumbnail?.file.name
+    );
     await uploadBytes(thumbnailRef, thumbnail?.file);
     const downloadURL = await getDownloadURL(thumbnailRef);
     await updateDoc(doc(firestore, "student-space", id), {
       thumbnail: { url: downloadURL, name: thumbnail?.file.name },
-      lasteUpdate : serverTimestamp()
+      lasteUpdate: serverTimestamp(),
     });
     console.log("thumbnail updated");
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-export const deleteStudentThumbnail = async (id : string , thumbnail : Thumbnail , isDeletePoste : boolean) => {
-  if(!thumbnail) return console.error("no file");
+export const deleteStudentThumbnail = async (
+  id: string,
+  thumbnail: Thumbnail,
+  isDeletePoste: boolean
+) => {
+  if (!thumbnail) return console.error("no file");
   try {
     const storage = getStorage();
-    const thumbnailRef = ref(storage, `student-thumbnails/${id}/` + thumbnail?.name);
+    const thumbnailRef = ref(
+      storage,
+      `student-thumbnails/${id}/` + thumbnail?.name
+    );
     await deleteObject(thumbnailRef);
-    if(isDeletePoste){
-      console.log('student-thumbnails delted delte poste');
-      return
-    } 
+    if (isDeletePoste) {
+      console.log("student-thumbnails delted delte poste");
+      return;
+    }
     await updateDoc(doc(firestore, "postes", id), {
       thumbnail: null,
-      lasteUpdate : serverTimestamp()
+      lasteUpdate: serverTimestamp(),
     });
     console.log("thumbnail deleted");
   } catch (error) {
     console.error(error);
   }
-}
+};
 
-
-// ! delete student poste 
+// ! delete student poste
 const DeleteStudentPoste = async (id: string) => {
   try {
     await deleteDoc(doc(firestore, `student-space/${id}`));
@@ -490,18 +537,18 @@ const DeleteStudentPoste = async (id: string) => {
 export const delteStudentPosteImages = (
   id: string | undefined,
   images: StudentPoste["images"],
-  thumbnail : StudentPoste["thumbnail"] 
+  thumbnail: StudentPoste["thumbnail"]
 ) => {
-  console.log(thumbnail , images , 'delete student poste ?');
-  
+  console.log(thumbnail, images, "delete student poste ?");
+
   if (!id) return;
   Promise.allSettled(
     images.map(async (img) => {
       const imageRef = ref(storage, `student-images/${id}/` + img.name);
       return deleteObject(imageRef)
         .then(() => {
-          if(thumbnail){
-            deleteThumbnail(id , thumbnail, true)
+          if (thumbnail) {
+            deleteThumbnail(id, thumbnail, true);
           }
           DeleteStudentPoste(id);
           console.log("image deleted");
@@ -514,3 +561,148 @@ export const delteStudentPosteImages = (
     })
   );
 };
+
+// ! check if the tabel of the speciality is exist
+export const checkIfTabelExist = async (
+  faculites: string,
+  speciality: string
+) => {
+  try {
+    const docRef = doc(firestore, `faculiters/${faculites}`);
+    const docSnap = await getDoc(docRef);
+    // console.log(docSnap.exists() , docSnap.data());
+    if (docSnap.exists()) {
+      const isSpecialityExiste = docSnap
+        .data()
+        ?.flieres.find((f: Filiers) => f.name === speciality);
+      if (isSpecialityExiste) {
+        return {
+          isFacExiste: true,
+          isSpecExiste: true,
+          tabelImage: isSpecialityExiste,
+        };
+      } else {
+        return {
+          isFacExiste: true,
+          isSpecExiste: false,
+          tabelImage: null,
+        };
+      }
+    } else {
+      console.log("faculiter not existe please creat a new one ");
+      return {
+        isFacExiste: false,
+        isSpecExiste: false,
+        tabelImage: null,
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      isFacExiste: false,
+      isSpecExiste: false,
+      tabelImage: null,
+    };
+  }
+};
+
+export const creatSpecialityTabel = async (
+  thumbnail: Thumbnail,
+  faculite: string,
+  speciality: string
+) => {
+  console.log(faculite, speciality);
+  try {
+    const docRef = doc(firestore, `faculiters`, faculite);
+    const snapshot = await setDoc(docRef, {
+      name: faculite,
+      flieres: [],
+    });
+    console.log("poste added");
+
+    // add thumbnail file image to storage
+    const storage = getStorage();
+    const thumbnailRef = ref(
+      storage,
+      `tabelstudent-image/${faculite}/` + thumbnail?.name
+    );
+    if (thumbnail?.file) {
+      uploadBytes(thumbnailRef, thumbnail.file).then(async () => {
+        const downloadURL = await getDownloadURL(thumbnailRef);
+        await updateDoc(docRef, {
+          flieres: arrayUnion({ url: downloadURL, name: speciality }),
+        });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const updateSpecialityTabelImage = async (
+  thumbnail: Thumbnail,
+  docRef : DocumentReference,
+  tabelData : Filiers
+) => {
+  try {
+    // remove the old image
+    await updateDoc(docRef, {
+      flieres: arrayRemove(tabelData),
+    });
+
+    // add the new image
+    const storage = getStorage();
+    const thumbnailRef = ref(
+      storage,
+      `tabelstudent-image/${docRef.id}/` + thumbnail?.name
+    );
+    if (thumbnail?.file) {
+      uploadBytes(thumbnailRef, thumbnail.file).then(async () => {
+        const downloadURL = await getDownloadURL(thumbnailRef);
+        await updateDoc(docRef, {
+          flieres: arrayUnion({ url: downloadURL, name: tabelData.name }),
+        });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const updateSpecialityTabel = async (
+  thumbnail: Thumbnail,
+  faculite: string,
+  speciality: string
+) => {
+  try {
+    const docRef = doc(firestore ,"faculiters" , faculite );
+    const docSnap = await getDoc(docRef)
+    if(docSnap.exists()){
+      const specilalityDoc = docSnap.data()?.flieres?.find((f : Filiers) => f.name === speciality);
+      if(specilalityDoc?.name === speciality && specilalityDoc?.url !== thumbnail?.url){
+        console.log('thumbnail change' , thumbnail , specilalityDoc);
+        
+        updateSpecialityTabelImage(thumbnail, docRef, specilalityDoc)
+        return
+      }
+    }
+    // update the faculiters 
+    const storage = getStorage();
+    const thumbnailRef = ref(
+      storage,
+      `tabelstudent-image/${faculite}/` + thumbnail?.name
+    );
+    if (thumbnail?.file) {
+      uploadBytes(thumbnailRef, thumbnail.file).then(async () => {
+        const downloadURL = await getDownloadURL(thumbnailRef);
+        await updateDoc(docRef, {
+          flieres: arrayUnion({ url: downloadURL, name: speciality }),
+        });
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    
+  }
+};
+

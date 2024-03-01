@@ -25,6 +25,8 @@ const config = {
       },
       colors: {
         'primary-color' : '#26a306',
+        'btn' : '#58cc02',
+        'btn-hover' : '#2fb30c',
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

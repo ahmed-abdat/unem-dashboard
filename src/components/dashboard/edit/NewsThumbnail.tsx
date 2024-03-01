@@ -18,9 +18,11 @@ import { Thumbnail } from "@/types/news-poste";
 export default function NewsThumbnail({
   thumbnail,
   setThumbnail,
+  title = " اختيار صورة المصغرة"
 }: {
   thumbnail : Thumbnail
   setThumbnail : (thumbnail : Thumbnail) => void
+  title? : string
 }) {
 
   const handelOnThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -48,7 +50,7 @@ export default function NewsThumbnail({
     <Card className="w-full">
       <CardHeader className="px-4 pt-3 pb-5">
         <CardTitle className="font-tajawal font-semibold text-lg">
-          اختيار صورة المصغرة
+         {title}
         </CardTitle>
       </CardHeader>
       <CardContent className="px-2 pb-4">
