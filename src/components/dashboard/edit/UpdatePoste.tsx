@@ -84,7 +84,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
     if (postId) {
       fetchPostes();
     }
-  }, [postId]);
+  }, [postId , form , router]);
 
   // update the poste data , title , discribtion , videoURL
   const updatePosteInfo = async (posteData: NewsUpdate) => {

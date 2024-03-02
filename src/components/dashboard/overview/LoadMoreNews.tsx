@@ -39,7 +39,7 @@ export default function LoadingMore({
       console.log("lastDocID", lastDocID, "inView", inView, "postes", postes);
       fetchMore(lastDocID);
     }
-  }, [inView, lastDocID, postes]);
+  }, [inView, lastDocID, postes , isStudent]);
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 ">

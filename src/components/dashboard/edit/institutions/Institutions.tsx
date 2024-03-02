@@ -87,7 +87,7 @@ export default function Institutions({
       setIsUpdating(false);
     }
     setisExisteSpeciality("null");
-  }, [facuiliter]);
+  }, [facuiliter , isUpdating]);
 
   useMemo(() => {
     if (isUpdating) {
@@ -95,7 +95,7 @@ export default function Institutions({
     } else {
       setisExisteSpeciality("null");
     }
-  }, [speciality]);
+  }, [speciality , isUpdating]);
 
   const handelSearchSpeciality = async () => {
     setLoading(true);

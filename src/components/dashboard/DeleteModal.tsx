@@ -95,7 +95,7 @@ export function DeleteModal({
     }
     setPoste(null);
     setFiliere(null);
-  }, [posteId , router]);
+  }, [posteId , router , collectionName , flieresId]);
 
   
 
