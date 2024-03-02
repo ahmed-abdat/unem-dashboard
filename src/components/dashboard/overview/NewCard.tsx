@@ -11,6 +11,7 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
 import Link from "next/link";
+import {MAINROUTE} from '@/constant/route'
 
 export default function NewCard({
   poste,
@@ -19,7 +20,7 @@ export default function NewCard({
   poste: NewsPoste;
   isStudent?: boolean;
 }) {
-  const mainUrl = "http://localhost:3000";
+  const mainUrl = MAINROUTE;
   const posteId = isStudent ? "studetnPosteId" : "postId";
   const collectionName = isStudent ? "student-space" : "postes";
 

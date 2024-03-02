@@ -1,0 +1,1 @@
+export const MAINROUTE = 'https://unem-dashboard.vercel.app'

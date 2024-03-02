@@ -691,8 +691,6 @@ export const updateSpecialityTabel = async (
     if(docSnap.exists()){
       const specilalityDoc = docSnap.data()?.flieres?.find((f : Filiers) => f.name === speciality);
       if(specilalityDoc?.name === speciality && specilalityDoc?.url !== thumbnail?.url){
-        console.log('thumbnail change' , thumbnail , specilalityDoc);
-        
         updateSpecialityTabelImage(thumbnail, docRef, specilalityDoc)
         return
       }

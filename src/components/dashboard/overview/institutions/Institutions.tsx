@@ -1,6 +1,4 @@
 import { fetchPostes } from "@/app/action";
-import NewsCards from "@/components/dashboard/overview/NewsCards";
-import LoadMore from "@/components/dashboard/overview/LoadMoreNews";
 import InstitutionsCards from "@/components/dashboard/overview/institutions/InstitutionsCards";
 import LoadMoreInstitutions from "@/components/dashboard/overview/institutions/InstitutionsLoadMore";
 

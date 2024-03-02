@@ -36,8 +36,6 @@ export function DeleteModal({
   const [poste, setPoste] = useState<NewsPoste | null>(null);
   const [filiere, setFiliere] = useState<Filiers | null>(null);
   const [loading, setLoading] = useState(false);
-
-  console.log(filiere);
   
   const router = useRouter();
 

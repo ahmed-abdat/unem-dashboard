@@ -42,37 +42,35 @@ export default function Institutions({
 
   useEffect(() => {
     const getFlieres = async () => {
-    const flieres = await getFaculiters(collectionName, postId, flieresId);
-    if (flieres) {
+      const flieres = await getFaculiters(collectionName, postId, flieresId);
+      if (flieres) {
         const fac = {
-            content: flieres.label,
-            url: `/${flieres.name}`,
+          content: flieres.label,
+          url: `/${flieres.name}`,
         };
         const spec = flieres?.flieres.find(
-            (f: Filiers) => f.name === flieresId
+          (f: Filiers) => f.name === flieresId
         );
         setIsUpdating(true);
         setFaculiter(fac);
         setSpeciality({ content: spec?.name, url: `/${spec?.name}` });
         setThumbnail(spec);
-    }else {
+      } else {
         setIsUpdating(false);
         setThumbnail(null);
-
-    }
+      }
 
       // setFaculiter(flieres.name)
     };
 
     if (postId && collectionName && flieresId) {
       getFlieres();
-    }else {
+    } else {
       setIsUpdating(false);
       setThumbnail(null);
       setisExisteSpeciality("null");
     }
   }, [postId, collectionName, flieresId]);
-  
 
   useMemo(() => {
     const faculiter = filieres.find(
@@ -80,13 +78,11 @@ export default function Institutions({
     );
 
     const fliers = faculiter?.filieres;
-    console.log(faculiter, fliers);
-
     if (fliers && !isUpdating) {
       setSpeciality(fliers[0]);
       setFilierese(fliers);
     }
-    if(fliers && isUpdating){
+    if (fliers && isUpdating) {
       setFilierese(fliers);
       setIsUpdating(false);
     }
@@ -94,9 +90,9 @@ export default function Institutions({
   }, [facuiliter]);
 
   useMemo(() => {
-    if(isUpdating) {
+    if (isUpdating) {
       setisExisteSpeciality("exist");
-    }else {
+    } else {
       setisExisteSpeciality("null");
     }
   }, [speciality]);

@@ -1,20 +1,14 @@
 "use client";
-import { NewsPoste } from "@/types/news-poste";
-import NewCard from "@/components/dashboard/overview/NewCard";
 import { useEffect, useState } from "react";
 import {
-  DocumentData,
   collection,
   onSnapshot,
   orderBy,
   query,
-  sum,
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
-import { StudentPoste } from "@/types/student-space";
 import InstitutionsCard from "./InstitutionsCard";
 import { Institutions } from "@/types/filiers-tabel";
-import { filieres } from "@/constant/filiers";
 import { Separator } from "@/components/ui/separator";
 
 export default function InstitutionsCards({

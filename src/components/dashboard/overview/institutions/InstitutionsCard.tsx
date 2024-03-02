@@ -1,20 +1,17 @@
-import { NewsPoste } from "@/types/news-poste";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardHeader,
   CardFooter,
-  CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Edit, Trash } from "lucide-react";
 import Link from "next/link";
 import { Filiers } from "@/types/filiers-tabel";
+import { MAINROUTE } from "@/constant/route";
 
 export default function InstitutionsCard({ poste , posteIde }: { poste: Filiers , posteIde: string}) {
-  const mainUrl = "http://localhost:3000";
+  const mainUrl = MAINROUTE;
   const posteId = "postId";
   const collectionName = "faculiters";
 
