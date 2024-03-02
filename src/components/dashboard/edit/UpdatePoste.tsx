@@ -238,9 +238,9 @@ export function UpdatePoste({ postId }: { postId: string }) {
       updatePosteImages(notHostedImages);
     }
 
-    if (localePoste.thumbnail.url !== thumbnail.url) {
+    if (localePoste?.thumbnail?.url !== thumbnail?.url) {
       console.log("update thumbnail");
-      removeAndUpdateThumbnail(localePoste.thumbnail, thumbnail);
+      removeAndUpdateThumbnail(localePoste?.thumbnail, thumbnail);
     }
   }
 
