@@ -76,7 +76,7 @@ export default function NewsThumbnail({
             </div>
           </>
         ) : (
-          <div className="flex justify-center items-center w-full h-[250px] bg-gray-50 pb-4">
+          <div className="flex justify-center items-center w-full h-[250px] bg-gray-300 pb-4">
             <label className="cursor-pointer w-full h-full flex items-center justify-center rounded-md">
               <input
                 type="file"
