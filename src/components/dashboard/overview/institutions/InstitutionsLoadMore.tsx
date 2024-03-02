@@ -1,7 +1,6 @@
 "use client";
 
 import { fetchMorePostes } from "@/app/action";
-import { NewsPoste } from "@/types/news-poste";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { cn } from "@/lib/utils";

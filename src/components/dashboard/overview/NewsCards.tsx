@@ -3,12 +3,10 @@ import { NewsPoste } from "@/types/news-poste";
 import NewCard from "@/components/dashboard/overview/NewCard";
 import { useEffect, useState } from "react";
 import {
-  DocumentData,
   collection,
   onSnapshot,
   orderBy,
   query,
-  sum,
 } from "firebase/firestore";
 import { db } from "@/config/firebase";
 import { StudentPoste } from "@/types/student-space";

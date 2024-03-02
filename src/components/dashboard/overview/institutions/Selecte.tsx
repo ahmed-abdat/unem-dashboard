@@ -8,7 +8,6 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandSeparator,
   CommandInput,
   CommandItem,
 } from "@/components/ui/command";

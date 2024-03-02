@@ -2,20 +2,11 @@
 
 import { fetchMorePostes } from "@/app/action";
 import { NewsPoste } from "@/types/news-poste";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-} from "@/components/ui/card";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { cn } from "@/lib/utils";
 import CardSkeleton from "./CardSkeleton";
 import NewCard from "./NewCard";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LoadingMore({
   lastDocId,

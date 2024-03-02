@@ -1,11 +1,9 @@
 import { NewsPoste } from "@/types/news-poste";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardFooter,
-  CardTitle,
 } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
