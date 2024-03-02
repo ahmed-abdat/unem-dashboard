@@ -72,10 +72,12 @@ export function SelecteInstitution({
                   
                   const selectedOption = options.find((option) => {
                     if(isSpeciality) {
-                      return option.content === currentValue.toUpperCase();
+                      return option.content.trim() === currentValue.trim().toUpperCase();
                     }
+                    
                     return option.content === currentValue
                   });     
+                  console.log( options.find((op) => op.content.trim() === currentValue.trim()) ,currentValue , 'selectedOption');
                   if(currentValue !== value.content && selectedOption) {
                     setValue(selectedOption);
                   } else {

@@ -40,8 +40,8 @@ import {
   StudentUpdate,
 } from "@/types/student-space";
 import { any } from "zod";
-import { faculiters, optionType } from "@/constant/filiers";
-import { Filiers } from "@/types/filiers-tabel";
+import { faculiters, optionType, filieres } from "@/constant/filiers";
+import { Filiers , Institutions} from "@/types/filiers-tabel";
 
 const firestore = getFirestore(app);
 
@@ -77,7 +77,11 @@ export const getPoste = async (
   }
 };
 
-export const fetchPostes = async (collectionName: string = "postes") => {
+type CollectionName = 'postes' | 'faculiters' | 'student-space';
+
+type DataType<T> = T extends 'postes' | 'student-space' ? NewsPoste : T extends 'faculiters' ? Institutions : never;
+
+export const fetchPostes = async <T extends CollectionName>(collectionName: T = 'postes' as T) => {
   const numberOfPostes = 10;
   try {
     const q = query(
@@ -86,9 +90,9 @@ export const fetchPostes = async (collectionName: string = "postes") => {
       limit(numberOfPostes)
     );
     const snapshot = await getDocs(q);
-    let postes: NewsPoste[] = [];
+    let postes: DataType<T>[] = [];
     snapshot.forEach((doc) => {
-      const postData = doc.data() as NewsPoste; // Cast doc.data() to NewsPoste type
+      const postData = doc.data() as DataType<T>; // Cast doc.data() to the appropriate type
       postes.push({ id: doc.id, ...postData });
     });
 
@@ -106,13 +110,14 @@ export const fetchPostes = async (collectionName: string = "postes") => {
   }
 };
 
-export const fetchMorePostes = async ({
+
+export const fetchMorePostes = async <T extends CollectionName>({
   lastDocId,
-  collectionName = "postes",
+  collectionName = "postes" as T,
 }: {
   lastDocId: string | null;
-  collectionName?: string;
-}): Promise<{ otherPostes: NewsPoste[]; id: null | string }> => {
+  collectionName?: T;
+}): Promise<{ otherPostes: DataType<T>[]; id: null | string }> => {
   console.log("fetchMorePostes", lastDocId);
   const numberOfPostesToFetch = 6;
   let id: string | null = lastDocId;
@@ -130,9 +135,9 @@ export const fetchMorePostes = async ({
       limit(numberOfPostesToFetch)
     );
     const querySnapshot = await getDocs(q);
-    let otherposte: NewsPoste[] = [];
+    let otherposte: DataType<T>[] = [];
     querySnapshot.forEach((doc) => {
-      const posteData = doc.data() as NewsPoste;
+      const posteData = doc.data() as DataType<T>;
       otherposte.push({ id: doc.id, ...posteData });
     });
 
@@ -611,12 +616,16 @@ export const creatSpecialityTabel = async (
   faculite: string,
   speciality: string
 ) => {
-  console.log(faculite, speciality);
+  const facLabel = faculiters.find((f) => f.url.slice(1) === faculite);
+  console.log(facLabel);
+  
   try {
     const docRef = doc(firestore, `faculiters`, faculite);
     const snapshot = await setDoc(docRef, {
       name: faculite,
+      label : facLabel?.content,
       flieres: [],
+      createdAt: serverTimestamp(),
     });
     console.log("poste added");
 
@@ -644,10 +653,12 @@ const updateSpecialityTabelImage = async (
   docRef : DocumentReference,
   tabelData : Filiers
 ) => {
+
   try {
     // remove the old image
     await updateDoc(docRef, {
       flieres: arrayRemove(tabelData),
+      createdAt: serverTimestamp(),
     });
 
     // add the new image
@@ -697,6 +708,7 @@ export const updateSpecialityTabel = async (
         const downloadURL = await getDownloadURL(thumbnailRef);
         await updateDoc(docRef, {
           flieres: arrayUnion({ url: downloadURL, name: speciality }),
+          createdAt: serverTimestamp(),
         });
       });
     }
@@ -705,4 +717,48 @@ export const updateSpecialityTabel = async (
     
   }
 };
+
+// ! get filiere tabel
+export const getFliers = async (collectionName : string , id : string , flierId : string) => {
+  try {
+    const docRef = doc(firestore, collectionName, id);
+    const docSnap = await getDoc(docRef);
+    const flierData = docSnap.data()?.flieres.find((f : Filiers) => f.name === flierId);
+    return flierData;
+  } catch (error) {
+    console.log(error);
+    return null
+  }
+}
+
+// ! get faculiters tabel
+export const getFaculiters = async (collectionName : string , id : string , flierId : string) => {
+  try {
+    const docRef = doc(firestore, collectionName, id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.data();
+  } catch (error) {
+    console.log(error);
+    return null
+  }
+}
+
+
+// ! delete filiere tabel
+export const deleteFlitersTabel = async (collectionName : string , id : string , flierId : string) => {
+  try {
+    const docRef = doc(firestore, collectionName, id);
+    const flierData = await getFliers(collectionName , id , flierId);
+    if(flierData){
+      await updateDoc(docRef, {
+        flieres: arrayRemove(flierData),
+        createdAt: serverTimestamp(),
+      });
+    }
+    console.log("tabel deleted");
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
 

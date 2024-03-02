@@ -14,7 +14,7 @@ export type ImageType = {
 export type Thumbnail = {
   name: string;
   url: string;
-  file: File;
+  file: File ;
 } | null; 
 
 export type Poste = {
