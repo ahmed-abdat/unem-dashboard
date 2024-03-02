@@ -53,12 +53,12 @@ export default function NewCard({
       </CardHeader>
       <CardFooter className="grid gap-6">
         <div className="flex justify-start items-center gap-x-3">
-          <Button variant="outline" asChild>
+          <Button variant="outline" asChild aria-label="Edit">
             <Link href={updateUrl.toString()} scroll={false}>
               <Edit size={14} />
             </Link>
           </Button>
-          <Button variant="destructive" asChild>
+          <Button variant="destructive" asChild aria-label="delete">
             <Link href={url.toString()} scroll={false}>
               <Trash size={14} />
             </Link>
