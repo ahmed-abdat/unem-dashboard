@@ -30,6 +30,7 @@ export default function TipTap({ description, onChange }: TipTapProps) {
     extensions: [
       StarterKit.configure({
         heading : false,
+        blockquote : false,
       }),
       Heading.configure({
         levels: [1],
