@@ -23,7 +23,7 @@ export const NewsForm = z.object({
   ).optional(),
   summary: z.string().max(200, {
     message: "الملخص يجب أن لا يتجاوز 200 حرفاً",
-  }).optional(),
+  }),
   discribtion: z.string().min(4, {
     message: "الوصف يجب أن يحتوي على 4 أحرف على الأقل",
   }),

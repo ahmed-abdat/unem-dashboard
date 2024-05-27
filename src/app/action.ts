@@ -39,7 +39,6 @@ import {
   PosteStudent,
   StudentUpdate,
 } from "@/types/student-space";
-import { any } from "zod";
 import { faculiters, optionType, filieres } from "@/constant/filiers";
 import { Filiers , Institutions} from "@/types/filiers-tabel";
 
@@ -197,7 +196,7 @@ export const deltePosteImages = (
 
 // ! add poste
 
-export const addPoste = async (poste: Poste) => {
+export const addPoste = async (poste: Poste , posteCollection : string = 'postes') => {
   const { thumbnail, videoURL, summary } = poste;
   try {
     const posteData = {
@@ -209,8 +208,8 @@ export const addPoste = async (poste: Poste) => {
       createdAt: serverTimestamp(),
       lasteUpdate: serverTimestamp(),
     };
-    const docRef = await addDoc(collection(firestore, "postes"), posteData);
-    console.log("poste added");
+    const docRef = await addDoc(collection(firestore, posteCollection), posteData);
+    console.log(`poste added ${posteCollection}`);
 
     // add thumbnail file image to storage
     const storage = getStorage();
@@ -256,9 +255,11 @@ export const addPoste = async (poste: Poste) => {
 
 // ! update poste
 
-export const updatePosteData = async (id: string, posteData: NewsUpdate) => {
+export const updatePosteData = async (id: string, posteData: NewsUpdate , posteCollection : string = 'postes') => {
+  console.log(posteData , id , posteCollection);
+  
   try {
-    await updateDoc(doc(firestore, "postes", id), posteData);
+    await updateDoc(doc(firestore, posteCollection, id), posteData);
     console.log("poste updated");
   } catch (error) {
     console.log(error);
@@ -268,7 +269,8 @@ export const updatePosteData = async (id: string, posteData: NewsUpdate) => {
 // ? update poste images
 export const updateImages = async (
   id: string,
-  notHostedImages: ImageType[]
+  notHostedImages: ImageType[],
+  posteCollection : string = 'postes'
 ) => {
   try {
     await Promise.all(
@@ -277,7 +279,7 @@ export const updateImages = async (
         const imageRef = ref(storage, `images/${id}/` + image.file.name);
         await uploadBytes(imageRef, image.file);
         const downloadURL = await getDownloadURL(imageRef);
-        await updateDoc(doc(firestore, "postes", id), {
+        await updateDoc(doc(firestore, posteCollection, id), {
           images: arrayUnion({ url: downloadURL, name: image.file.name }),
           lasteUpdate: serverTimestamp(),
         });

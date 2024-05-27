@@ -40,6 +40,8 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { isSamePoste, isUpdatePoste } from "@/utils/news/poste";
+import TipTap from "@/components/TipTap";
+import { isValidJSON } from "@/lib/valid-json";
 
 // This can come from your database or API.
 export function UpdatePoste({ postId }: { postId: string }) {
@@ -187,9 +189,11 @@ export function UpdatePoste({ postId }: { postId: string }) {
   function onSubmit(data: TNewsForm) {
     const { discribtion, title, videoURL, summary } = data;
     const local = localStorage.getItem("poste") || "";
+
+    const stringDiscribtion = isValidJSON(discribtion) ? discribtion : JSON.stringify(discribtion);
     const posteData = {
       title,
-      discribtion,
+      discribtion: stringDiscribtion,
       videoURL,
       summary,
       thumbnail,
@@ -243,7 +247,7 @@ export function UpdatePoste({ postId }: { postId: string }) {
       removeAndUpdateThumbnail(localePoste?.thumbnail, thumbnail);
     }
   }
-
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -312,11 +316,12 @@ export function UpdatePoste({ postId }: { postId: string }) {
             <FormItem>
               <FormLabel> وصف المنشور </FormLabel>
               <FormControl>
-                <Textarea
+                {/* <Textarea
                   placeholder="أدخل وصف المنشور هنا"
                   className="resize-none min-h-40"
                   {...field}
-                />
+                /> */}
+                { field.value && <TipTap description={field.value} onChange={field.onChange}/> }
               </FormControl>
               <FormMessage />
             </FormItem>

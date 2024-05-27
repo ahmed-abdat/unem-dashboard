@@ -24,6 +24,7 @@ import { addPoste } from "@/app/action";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import TipTap from '@/components/TipTap'
 
 
 export function CreateNewPoste() {
@@ -59,6 +60,8 @@ export function CreateNewPoste() {
 
   function onSubmit(data: TNewsForm) {
     const {discribtion , title , videoURL , summary} = data
+    console.log(data);
+    // return 
     const posteData = {
       title,
       summary : summary ? summary : null,
@@ -135,11 +138,12 @@ export function CreateNewPoste() {
             <FormItem>
               <FormLabel> وصف المنشور </FormLabel>
               <FormControl>
-                <Textarea
+                {/* <Textarea
                   placeholder="أدخل وصف المنشور هنا"
                   className="resize-none min-h-40"
                   {...field}
-                />
+                /> */}
+                 <TipTap description={''} onChange={field.onChange}/>
               </FormControl>
               <FormMessage />
             </FormItem>

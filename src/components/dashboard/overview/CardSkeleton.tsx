@@ -20,7 +20,9 @@ export default function CardSkeleton({ count }: { count?: number }) {
               <Skeleton className="w-full max-w-full h-40" />
             </div>
             <CardDescription className="font-aljazira font-semibold text-lg">
+              <div className="w-full">
               <Skeleton className="w-full h-8" />
+              </div>
             </CardDescription>
           </CardHeader>
           <CardFooter className="grid gap-6">

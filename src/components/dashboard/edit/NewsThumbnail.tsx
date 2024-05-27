@@ -1,13 +1,11 @@
 "use client";
 
-import { Label } from "@/components/ui/label";
 import { ChangeEvent } from "react";
 import { ImagePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
