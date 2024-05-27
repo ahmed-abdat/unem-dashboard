@@ -12,6 +12,7 @@ import {
   AlignCenter,
   AlignRight,
   AlignJustify,
+  Quote,
 } from "lucide-react";
 
 import { Toggle } from "@/components/ui/toggle";
@@ -86,6 +87,14 @@ function BubelMenu({ editor , setOpenDialog}: ToolbarProps) {
         }
       >
         <AlignRight className="h-4 w-4" />
+      </Toggle>
+
+      <Toggle
+        size="sm"
+        pressed={editor.isActive('blockquote')}
+        onPressedChange={() => editor.chain().focus().toggleBlockquote().run()}
+      >
+        <Quote className="h-4 w-4" />
       </Toggle>
 
 
