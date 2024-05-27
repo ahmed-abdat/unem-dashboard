@@ -8,13 +8,13 @@ import Heading from "@tiptap/extension-heading";
 import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
 import TextAlign from "@tiptap/extension-text-align";
+import Blockquote from '@tiptap/extension-blockquote'
 // import Image from '@tiptap/extension-image'
 
 import BubelMenu from "@/components/BubelMenu";
 import { UrlDialog } from "./UrlDialog";
 import { Url } from "@/types/url";
 import { isValidJSON } from "@/lib/valid-json";
-import { json } from "stream/consumers";
 
 type TipTapProps = {
   description: string;
@@ -50,7 +50,11 @@ export default function TipTap({ description, onChange }: TipTapProps) {
         linkOnPaste : true,
         openOnClick : false,
         }),
-
+      Blockquote.configure({
+        HTMLAttributes: {
+          class: "border-r-4  border-primary-color pr-2 ",
+        },
+      }),
 
         // Image.configure({
         //     inline: true,
