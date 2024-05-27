@@ -45,6 +45,7 @@ import { useRouter } from "next/navigation";
 import { isSamePoste, isUpdatePoste } from "@/utils/news/poste";
 import { StudentPoste, StudentUpdate } from "@/types/student-space";
 import { TStudentForm } from "@/lib/dashboard/student-space-form";
+import TipTap from "@/components/TipTap";
 
 // This can come from your database or API.
 export function UpdatePoste({ postId }: { postId: string }) {
@@ -313,11 +314,12 @@ export function UpdatePoste({ postId }: { postId: string }) {
             <FormItem>
               <FormLabel> وصف المنشور </FormLabel>
               <FormControl>
-                <Textarea
+                {/* <Textarea
                   placeholder="أدخل وصف المنشور هنا"
                   className="resize-none min-h-40"
                   {...field}
-                />
+                /> */}
+                { field.value && <TipTap description={field.value} onChange={field.onChange}/> }
               </FormControl>
               <FormMessage />
             </FormItem>

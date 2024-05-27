@@ -24,6 +24,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { PosteStudent } from "@/types/student-space";
 import { useRouter } from "next/navigation";
+import TipTap from "@/components/TipTap";
 
 export function CreatStudentSpacePoste() {
   const [thumbnail, setThumbnail] = useState<Thumbnail>(null);
@@ -134,11 +135,12 @@ export function CreatStudentSpacePoste() {
             <FormItem>
               <FormLabel> وصف المنشور </FormLabel>
               <FormControl>
-                <Textarea
+                {/* <Textarea
                   placeholder="أدخل وصف المنشور هنا"
                   className="resize-none min-h-40"
                   {...field}
-                />
+                /> */}
+                <TipTap description={''} onChange={field.onChange}/>
               </FormControl>
               <FormMessage />
             </FormItem>
